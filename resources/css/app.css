@@ -167,6 +167,6 @@
         @apply border-border outline-ring/50;
     }
     body {
-        @apply bg-background text-foreground;
+        @apply bg-gradient-to-b from-slate-50 to-white text-foreground dark:from-slate-950 dark:to-slate-900;
     }
 }
