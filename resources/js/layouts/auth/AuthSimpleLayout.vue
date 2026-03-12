@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
 import AppLogoIcon from '@/components/AppLogoIcon.vue';
+import BackgroundBlobs from '@/components/BackgroundBlobs.vue';
 import { home } from '@/routes';
 
 defineProps<{
@@ -13,7 +14,8 @@ defineProps<{
     <div
         class="flex min-h-svh flex-col items-center justify-center gap-6 bg-gradient-to-b from-slate-50 to-white p-6 md:p-10 dark:from-slate-950 dark:to-slate-900"
     >
-        <div class="w-full max-w-sm">
+        <BackgroundBlobs />
+        <div class="relative z-10 w-full max-w-sm">
             <div class="flex flex-col gap-8">
                 <div class="flex flex-col items-center gap-4">
                     <Link

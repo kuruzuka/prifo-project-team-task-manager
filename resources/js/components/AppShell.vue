@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { usePage } from '@inertiajs/vue3';
 import { SidebarProvider } from '@/components/ui/sidebar';
+import BackgroundBlobs from '@/components/BackgroundBlobs.vue';
 import type { AppShellVariant } from '@/types';
 
 type Props = {
@@ -17,6 +18,7 @@ const isOpen = usePage().props.sidebarOpen;
         v-if="variant === 'header'"
         class="flex min-h-screen w-full flex-col bg-gradient-to-b from-slate-50 to-white dark:from-slate-950 dark:to-slate-900"
     >
+        <BackgroundBlobs />
         <slot />
     </div>
     <SidebarProvider
@@ -24,6 +26,7 @@ const isOpen = usePage().props.sidebarOpen;
         :default-open="isOpen"
         class="bg-gradient-to-b from-slate-50 to-white dark:from-slate-950 dark:to-slate-900"
     >
+        <BackgroundBlobs />
         <slot />
     </SidebarProvider>
 </template>

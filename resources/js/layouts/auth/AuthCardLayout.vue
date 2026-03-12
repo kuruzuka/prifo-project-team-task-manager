@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
 import AppLogoIcon from '@/components/AppLogoIcon.vue';
+import BackgroundBlobs from '@/components/BackgroundBlobs.vue';
 import {
     Card,
     CardContent,
@@ -20,7 +21,8 @@ defineProps<{
     <div
         class="flex min-h-svh flex-col items-center justify-center gap-6 bg-gradient-to-b from-slate-50 to-white p-6 md:p-10 dark:from-slate-950 dark:to-slate-900"
     >
-        <div class="flex w-full max-w-md flex-col gap-6">
+        <BackgroundBlobs />
+        <div class="relative z-10 flex w-full max-w-md flex-col gap-6">
             <Link
                 :href="home()"
                 class="flex items-center gap-2 self-center font-medium"

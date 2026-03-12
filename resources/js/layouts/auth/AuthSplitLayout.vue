@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
 import AppLogoIcon from '@/components/AppLogoIcon.vue';
+import BackgroundBlobs from '@/components/BackgroundBlobs.vue';
 import { home } from '@/routes';
 
 const page = usePage();
@@ -16,6 +17,7 @@ defineProps<{
     <div
         class="relative grid h-dvh flex-col items-center justify-center bg-gradient-to-b from-slate-50 to-white px-8 sm:px-0 lg:max-w-none lg:grid-cols-2 lg:px-0 dark:from-slate-950 dark:to-slate-900"
     >
+        <BackgroundBlobs />
         <div
             class="relative hidden h-full flex-col bg-gradient-to-b from-slate-100 to-slate-50 p-10 text-white lg:flex dark:from-slate-900 dark:to-slate-950 dark:border-r"
         >
