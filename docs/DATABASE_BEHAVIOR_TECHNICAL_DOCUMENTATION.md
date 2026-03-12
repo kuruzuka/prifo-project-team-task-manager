@@ -22,9 +22,9 @@ This document provides exhaustive technical documentation of all database behavi
 
 ---
 
-## 1 - Activity Logging System
+## 1. Activity Logging System
 
-### 1.1 - What It Does (Explain Like I'm 5)
+### 1.1. What It Does (Explain Like I'm 5)
 
 Imagine you have a notebook where you write down everything that happens to your toys. "Mom moved the teddy bear to the shelf at 3pm." Activity logging is like that notebook — it records every important change in the system so administrators can see what happened, who did it, and when it occurred.
 
@@ -38,7 +38,7 @@ The system has **three types of activity logs**:
 
 ---
 
-### 1.2 - Which Models Use This Feature
+### 1.2. Which Models Use This Feature
 
 #### Models Using `HasActivityLogs` Trait:
 
@@ -63,7 +63,7 @@ use HasActivityLogs;
 
 ---
 
-### 1.3 - Where the Feature Is Implemented
+### 1.3. Where the Feature Is Implemented
 
 #### HasActivityLogs Trait
 
@@ -110,7 +110,7 @@ trait HasActivityLogs
 
 ---
 
-### 1.4 - Execution Flow
+### 1.4. Execution Flow
 
 ```
 User updates a task's status
@@ -132,7 +132,7 @@ Row inserted into `task_activity_log` table
 
 ---
 
-### 1.5 - Code References
+### 1.5. Code References
 
 #### Step 1: Controller calls update with logging
 
@@ -178,7 +178,7 @@ public function logTaskActivity(string $activityType, ?array $metadata = null, ?
 
 ---
 
-### 1.6 - Database Interaction
+### 1.6. Database Interaction
 
 #### activity_logs table
 
@@ -231,15 +231,15 @@ VALUES
 
 ---
 
-## 2 - Optimistic Locking
+## 2. Optimistic Locking
 
-### 2.1 - What It Does (Explain Like I'm 5)
+### 2.1. What It Does (Explain Like I'm 5)
 
 Think of two people editing the same Google Doc, but **without** seeing each other's changes in real-time. Optimistic locking is like putting a "version number" sticker on the document. When you try to save, the system checks: "Is the sticker the same as when you started?" If someone else changed it, your sticker is old, and the system says: "Sorry, someone else already changed this. Please refresh and try again."
 
 ---
 
-### 2.2 - Which Models Use This Feature
+### 2.2. Which Models Use This Feature
 
 | Model | File Path | Line Number | Version Column |
 |-------|-----------|-------------|----------------|
@@ -263,7 +263,7 @@ use HasOptimisticLocking;
 
 ---
 
-### 2.3 - Where the Feature Is Implemented
+### 2.3. Where the Feature Is Implemented
 
 **File:** [app/Concerns/HasOptimisticLocking.php](../app/Concerns/HasOptimisticLocking.php)
 
@@ -281,7 +281,7 @@ The trait provides:
 
 ---
 
-### 2.4 - Execution Flow
+### 2.4. Execution Flow
 
 ```
 Frontend sends update request with version
@@ -311,7 +311,7 @@ Check: Current DB version == Expected version?
 
 ---
 
-### 2.5 - Code References
+### 2.5. Code References
 
 #### Step 1: Controller uses withVersionCheck
 
@@ -410,7 +410,7 @@ public function saveWithVersionCheck(?int $expectedVersion = null, array $option
 
 ---
 
-### 2.6 - Database Interaction
+### 2.6. Database Interaction
 
 #### Version column migration
 
@@ -450,7 +450,7 @@ END;
 
 ---
 
-### 2.7 - Concurrency Scenario
+### 2.7. Concurrency Scenario
 
 ```
 TIME    USER A                          USER B
@@ -466,7 +466,7 @@ T6      ✗ REJECTED!
 
 ---
 
-### 2.8 - Exception Handling
+### 2.8. Exception Handling
 
 **File:** [app/Exceptions/StaleModelException.php](../app/Exceptions/StaleModelException.php)
 
@@ -500,9 +500,9 @@ class StaleModelException extends Exception
 
 ---
 
-## 3 - Soft Delete & Hard Delete Prevention
+## 3. Soft Delete & Hard Delete Prevention
 
-### 3.1 - What It Does (Explain Like I'm 5)
+### 3.1. What It Does (Explain Like I'm 5)
 
 Imagine a toy box with a "trash" section. When you want to throw away a toy, instead of actually throwing it in the garbage, you put it in the trash section of the toy box. You can still find it and take it back if you change your mind. But there's also a strict rule: nobody is allowed to permanently throw toys in the garbage — they can only go to the trash section.
 
@@ -511,7 +511,7 @@ Imagine a toy box with a "trash" section. When you want to throw away a toy, ins
 
 ---
 
-### 3.2 - Which Models Use This Feature
+### 3.2. Which Models Use This Feature
 
 #### Models Using `SoftDeletes` + `PreventsHardDeletes`:
 
@@ -532,7 +532,7 @@ use PreventsHardDeletes;
 
 ---
 
-### 3.3 - Where the Feature Is Implemented
+### 3.3. Where the Feature Is Implemented
 
 **File:** [app/Concerns/PreventsHardDeletes.php](../app/Concerns/PreventsHardDeletes.php)
 
@@ -580,7 +580,7 @@ trait PreventsHardDeletes
 
 ---
 
-### 3.4 - Execution Flow
+### 3.4. Execution Flow
 
 ```
 Developer calls $task->forceDelete()
@@ -598,7 +598,7 @@ Task remains in database (no deletion occurs)
 
 ---
 
-### 3.5 - Code References
+### 3.5. Code References
 
 #### Soft Delete Usage in Controller
 
@@ -622,7 +622,7 @@ public function destroy(Request $request, int $task): RedirectResponse
 
 ---
 
-### 3.6 - Database Interaction
+### 3.6. Database Interaction
 
 When `SoftDeletes` is used, the table has a `deleted_at` column:
 
@@ -646,15 +646,15 @@ SELECT * FROM tasks; -- Task::withTrashed()->get()
 
 ---
 
-## 4 - Database Triggers
+## 4. Database Triggers
 
-### 4.1 - What It Does (Explain Like I'm 5)
+### 4.1. What It Does (Explain Like I'm 5)
 
 Think of database triggers like automatic rules that a robot follows. When something happens (like changing a task), the robot automatically does something else (like updating a number). The robot never forgets and can't be tricked — it always follows the rules, even if the person making changes doesn't know about the rules.
 
 ---
 
-### 4.2 - Triggers Implemented
+### 4.2. Triggers Implemented
 
 **File:** [database/migrations/2026_03_12_000003_create_database_triggers.php](../database/migrations/2026_03_12_000003_create_database_triggers.php)
 
@@ -671,7 +671,7 @@ Think of database triggers like automatic rules that a robot follows. When somet
 
 ---
 
-### 4.3 - Trigger 1: Version Auto-Increment
+### 4.3. Trigger 1: Version Auto-Increment
 
 **Purpose:** Enable optimistic locking without manual version management.
 
@@ -697,7 +697,7 @@ Row is updated with new version value
 
 ---
 
-### 4.4 - Trigger 2: Status Transition Validation
+### 4.4. Trigger 2: Status Transition Validation
 
 **Purpose:** Enforce workflow rules — tasks must follow a proper lifecycle.
 
@@ -794,7 +794,7 @@ try {
 
 ---
 
-### 4.5 - Trigger 3: Auto-Complete Progress
+### 4.5. Trigger 3: Auto-Complete Progress
 
 **Purpose:** Keep progress consistent with status.
 
@@ -821,7 +821,7 @@ END;
 
 ---
 
-### 4.6 - Trigger 4: Prevent Orphan Tasks
+### 4.6. Trigger 4: Prevent Orphan Tasks
 
 **Purpose:** Block creating tasks in soft-deleted projects.
 
@@ -845,7 +845,7 @@ END;
 
 ---
 
-### 4.7 - Trigger 5: Prevent Project Delete with Tasks
+### 4.7. Trigger 5: Prevent Project Delete with Tasks
 
 **Purpose:** Block soft-deleting projects that have active tasks.
 
@@ -872,9 +872,9 @@ END;
 
 ---
 
-## 5 - Stored Procedures
+## 5. Stored Procedures
 
-### 5.1 - What It Does (Explain Like I'm 5)
+### 5.1. What It Does (Explain Like I'm 5)
 
 Think of stored procedures like a recipe card in a kitchen. Instead of telling the chef each step one by one ("get the flour, get the eggs, mix them..."), you just say "make pancakes" and the chef knows all the steps. It's faster, and the chef won't forget any steps.
 
@@ -882,7 +882,7 @@ Stored procedures are pre-written programs that live inside the database. When L
 
 ---
 
-### 5.2 - Procedures Implemented
+### 5.2. Procedures Implemented
 
 **File:** [database/migrations/2026_03_12_000004_create_stored_procedures.php](../database/migrations/2026_03_12_000004_create_stored_procedures.php)
 
@@ -895,7 +895,7 @@ Stored procedures are pre-written programs that live inside the database. When L
 
 ---
 
-### 5.3 - Procedure 1: Assign Task with Audit
+### 5.3. Procedure 1: Assign Task with Audit
 
 **Purpose:** Assign a user to a task atomically, preventing race conditions.
 
@@ -965,7 +965,7 @@ END;
 
 ---
 
-### 5.4 - Calling Stored Procedures from Laravel
+### 5.4. Calling Stored Procedures from Laravel
 
 **File:** [app/Services/StoredProcedureService.php](../app/Services/StoredProcedureService.php)
 
@@ -1011,7 +1011,7 @@ if ($procedureService->isSuccess($result)) {
 
 ---
 
-### 5.5 - Procedure 2: Bulk Update Task Status
+### 5.5. Procedure 2: Bulk Update Task Status
 
 **Purpose:** Update multiple tasks atomically with validation.
 
@@ -1049,15 +1049,15 @@ public function bulkUpdateTaskStatus(array $taskIds, int $newStatusId, int $acto
 
 ---
 
-## 6 - Transaction Management
+## 6. Transaction Management
 
-### 6.1 - What It Does (Explain Like I'm 5)
+### 6.1. What It Does (Explain Like I'm 5)
 
 Imagine you're transferring water from one bucket to another. A transaction is like saying: "Either ALL the water gets transferred, or NONE of it does." If something goes wrong in the middle (like the bucket tips over), all the water magically goes back to the first bucket. This way, you never end up with water spilled on the floor.
 
 ---
 
-### 6.2 - Where the Feature Is Implemented
+### 6.2. Where the Feature Is Implemented
 
 **File:** [app/Services/TransactionManager.php](../app/Services/TransactionManager.php)
 
@@ -1072,7 +1072,7 @@ The `TransactionManager` provides:
 
 ---
 
-### 6.3 - Transaction Log Table
+### 6.3. Transaction Log Table
 
 **File:** [database/migrations/2026_03_12_000002_create_transaction_logs_table.php](../database/migrations/2026_03_12_000002_create_transaction_logs_table.php)
 
@@ -1097,7 +1097,7 @@ The `TransactionManager` provides:
 
 ---
 
-### 6.4 - Execution Flow
+### 6.4. Execution Flow
 
 ```
 Controller calls withTransaction()
@@ -1132,7 +1132,7 @@ DB::transaction() wraps the callback
 
 ---
 
-### 6.5 - Code References
+### 6.5. Code References
 
 #### TransactionManager execute method
 
@@ -1205,7 +1205,7 @@ public function execute(
 
 ---
 
-### 6.6 - Usage Example in Controller
+### 6.6. Usage Example in Controller
 
 **File:** [app/Http/Controllers/TaskController.php](../app/Http/Controllers/TaskController.php#L639-L660)
 
@@ -1241,15 +1241,15 @@ public function store(TaskStoreRequest $request): RedirectResponse
 
 ---
 
-## 7 - Pessimistic Locking
+## 7. Pessimistic Locking
 
-### 7.1 - What It Does (Explain Like I'm 5)
+### 7.1. What It Does (Explain Like I'm 5)
 
 Imagine a bathroom with one toilet. When someone goes in, they lock the door. Anyone else who wants to use it has to wait outside. That's pessimistic locking — when you're working on something, you put a "lock" on it so nobody else can touch it until you're done.
 
 ---
 
-### 7.2 - Where the Feature Is Implemented
+### 7.2. Where the Feature Is Implemented
 
 **File:** [app/Services/LockManager.php](../app/Services/LockManager.php)
 
@@ -1264,7 +1264,7 @@ The `LockManager` provides:
 
 ---
 
-### 7.3 - Database Row Lock
+### 7.3. Database Row Lock
 
 **File:** [app/Services/LockManager.php](../app/Services/LockManager.php#L43-L73)
 
@@ -1307,7 +1307,7 @@ public function withRowLock(Model $model, Closure $callback, ?int $waitTimeout =
 
 ---
 
-### 7.4 - Advisory Lock (Cache-based)
+### 7.4. Advisory Lock (Cache-based)
 
 **Purpose:** For longer operations or cross-transaction coordination.
 
@@ -1341,7 +1341,7 @@ public function withAdvisoryLock(
 
 ---
 
-### 7.5 - Usage via UsesConcurrencyControl
+### 7.5. Usage via UsesConcurrencyControl
 
 **File:** [app/Concerns/UsesConcurrencyControl.php](../app/Concerns/UsesConcurrencyControl.php#L72-L90)
 
@@ -1365,7 +1365,7 @@ protected function withLockedTransaction(
 
 ---
 
-### 7.6 - Exception Handling
+### 7.6. Exception Handling
 
 **File:** [app/Exceptions/LockAcquisitionException.php](../app/Exceptions/LockAcquisitionException.php)
 
@@ -1395,9 +1395,9 @@ class LockAcquisitionException extends Exception
 
 ---
 
-## 8 - Concurrency Control Trait
+## 8. Concurrency Control Trait
 
-### 8.1 - What It Does (Explain Like I'm 5)
+### 8.1. What It Does (Explain Like I'm 5)
 
 Think of this trait like a helper that sits next to a controller. When the controller needs to do something important (like update a task), it asks the helper: "Please make sure this is done safely." The helper then:
 1. Checks if anyone else changed the data
@@ -1407,13 +1407,13 @@ Think of this trait like a helper that sits next to a controller. When the contr
 
 ---
 
-### 8.2 - Where the Feature Is Implemented
+### 8.2. Where the Feature Is Implemented
 
 **File:** [app/Concerns/UsesConcurrencyControl.php](../app/Concerns/UsesConcurrencyControl.php)
 
 ---
 
-### 8.3 - Which Controllers Use This Trait
+### 8.3. Which Controllers Use This Trait
 
 | Controller | File Path | Line Number |
 |------------|-----------|-------------|
@@ -1422,7 +1422,7 @@ Think of this trait like a helper that sits next to a controller. When the contr
 
 ---
 
-### 8.4 - Methods Provided
+### 8.4. Methods Provided
 
 | Method | Purpose | Uses |
 |--------|---------|------|
@@ -1434,7 +1434,7 @@ Think of this trait like a helper that sits next to a controller. When the contr
 
 ---
 
-### 8.5 - Complete Execution Flow for Task Update
+### 8.5. Complete Execution Flow for Task Update
 
 ```
 1. Frontend sends PUT /tasks/42/status
@@ -1490,7 +1490,7 @@ Think of this trait like a helper that sits next to a controller. When the contr
 
 ---
 
-### 8.6 - Error Handling Flow
+### 8.6. Error Handling Flow
 
 ```
 Exception thrown during callback
