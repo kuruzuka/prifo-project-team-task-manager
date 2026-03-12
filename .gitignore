@@ -1,0 +1,63 @@
+/.phpunit.cache
+/bootstrap/ssr
+/node_modules
+/public/build
+/public/hot
+/public/storage
+/storage/*.key
+/storage/pail
+/resources/js/actions
+/resources/js/routes
+/resources/js/wayfinder
+/vendor
+
+# Environment files
+.env
+.env.backup
+.env.production
+.env.local
+
+# IDE & Editor settings
+.phpactor.json
+.phpunit.result.cache
+/.fleet
+/.idea
+/.nova
+/.vscode
+/.zed
+*.swp
+*.swo
+*~
+.project
+.classpath
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+desktop.ini
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+
+# Logs
+Homestead.json
+Homestead.yaml
+npm-debug.log
+yarn-error.log
+*.log
+
+# Package manager locks (optional - can be useful for consistency)
+# Uncomment if you want to commit lock files
+# composer.lock
+# package-lock.json
+
+# Authentication
+/auth.json
+
+# OS executables
+*.exe
+*.dll
+*.so
+*.dylib
