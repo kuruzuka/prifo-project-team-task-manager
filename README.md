@@ -40,9 +40,10 @@ Priflo implements a role-based permission system where Admins have full control,
 - View team member workloads
 
 ### Role-Based Access Control
-- **Admin** — Full system access, can manage all projects and users
-- **Manager** — Manages assigned projects and creates tasks
-- **Member** — Works on assigned tasks within team projects
+- **Developer** — Internal developer with full administrative access and exclusive access to system documentation.
+- **Admin** — Full system access, can manage all projects and users.
+- **Manager** — Manages assigned projects and creates tasks.
+- **Member** — Works on assigned tasks within team projects.
 
 ### Activity Logging & Audit Trail
 - Track all changes to projects and tasks
@@ -510,7 +511,14 @@ Potential enhancements for future development:
 
 ## Internal Developer Documentation
 
-Priflo includes a built-in, web-based internal documentation system available at `/docs` for authenticated developers. It provides a comprehensive guide to the system architecture and implementation details.
+Priflo includes a built-in, web-based internal documentation system available at `/docs` for users with the **Developer** role. It provides a comprehensive guide to the system architecture, backend logic, and frontend component library.
+
+### Access & Visibility
+
+- **Role Required**: `Developer`. Users with this role inherit all Admin permissions.
+- **URL**: `/docs` (protected by `EnsureRole` middleware).
+- **Navigation**: The "Developer Docs" link is dynamically rendered in the sidebar and top navigation **only for Developer users** using the `usePermissions()` composable.
+- **Unauthorized Access**: Non-developer users (including regular Admins) will encounter a **403 Forbidden** page if they attempt to access this route directly.
 
 ### Key Implementation Details
 
