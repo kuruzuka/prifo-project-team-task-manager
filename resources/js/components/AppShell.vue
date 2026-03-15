@@ -16,7 +16,7 @@ const isOpen = usePage().props.sidebarOpen;
 <template>
     <div
         v-if="variant === 'header'"
-        class="flex min-h-screen w-full flex-col bg-gradient-to-b from-slate-50 to-white dark:from-slate-950 dark:to-slate-900"
+        class="flex min-h-screen w-full flex-col"
     >
         <BackgroundBlobs />
         <slot />
@@ -24,7 +24,6 @@ const isOpen = usePage().props.sidebarOpen;
     <SidebarProvider
         v-else
         :default-open="isOpen"
-        class="bg-gradient-to-b from-slate-50 to-white dark:from-slate-950 dark:to-slate-900"
     >
         <BackgroundBlobs />
         <slot />

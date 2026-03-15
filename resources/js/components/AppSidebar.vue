@@ -5,7 +5,7 @@ import {
     BookOpen, FolderGit2, LayoutGrid,
     FolderKanbanIcon, UsersRoundIcon,
     UsersIcon, FolderOpenDotIcon, ListChecksIcon,
-    ListTodoIcon,
+    ListTodoIcon, ShieldCheckIcon,
 } from 'lucide-vue-next';
 import AppLogo from '@/components/AppLogo.vue';
 import NavFooter from '@/components/NavFooter.vue';
@@ -26,7 +26,7 @@ import { usePage } from '@inertiajs/vue3';
 import { usePermissions } from '@/composables/usePermissions';
 
 const page = usePage();
-const { nav } = usePermissions();
+const { nav, canViewActivityLogs } = usePermissions();
 
 const userId = page.props.auth.user.id;
 
@@ -119,6 +119,24 @@ const teamNavItems = computed<NavItem[]>(() => {
     return items;
 });
 
+/**
+ * Admin navigation items.
+ * Only visible to users with admin permissions.
+ */
+const adminNavItems = computed<NavItem[]>(() => {
+    const items: NavItem[] = [];
+    
+    if (canViewActivityLogs.value) {
+        items.push({
+            title: 'Audit Logs',
+            href: '/admin/audit-logs',
+            icon: ShieldCheckIcon,
+        });
+    }
+    
+    return items;
+});
+
 const footerNavItems: NavItem[] = [
     {
         title: 'Repository',
@@ -152,6 +170,7 @@ const footerNavItems: NavItem[] = [
             <NavMain :items="projectNavItems" nav-title="Projects" />
             <NavMain :items="taskNavItems" nav-title="Tasks" />
             <NavMain :items="teamNavItems" nav-title="Teams" />
+            <NavMain v-if="adminNavItems.length > 0" :items="adminNavItems" nav-title="Admin" />
         </SidebarContent>
 
         <SidebarFooter>

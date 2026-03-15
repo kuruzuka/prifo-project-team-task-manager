@@ -1,13 +1,13 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use Laravel\Fortify\Features;
-
+use App\Http\Controllers\Admin\AuditLogController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\DashboardRouter;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\TeamController;
+use Illuminate\Support\Facades\Route;
+use Laravel\Fortify\Features;
 
 Route::inertia('/', 'Welcome', [
     'canRegister' => Features::enabled(Features::registration()),
@@ -59,6 +59,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Admin-only: management routes
     Route::middleware('role:Admin')->prefix('admin')->name('admin.')->group(function () {
+        // Audit logs
+        Route::get('audit-logs', [AuditLogController::class, 'index'])->name('audit-logs.index');
+
         // Team management
         // Route::resource('teams', AdminTeamController::class);
 
@@ -68,9 +71,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // User role management
         // Route::get('users', [AdminUserController::class, 'index'])->name('users.index');
         // Route::put('users/{user}/roles', [AdminUserController::class, 'updateRoles'])->name('users.roles');
-
-        // Activity logs
-        // Route::get('activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs.index');
     });
 
     // Team-scoped routes: require team membership
