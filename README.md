@@ -508,6 +508,28 @@ Potential enhancements for future development:
 
 ---
 
+## Internal Developer Documentation
+
+Priflo includes a built-in, web-based internal documentation system available at `/docs` for authenticated developers. It provides a comprehensive guide to the system architecture and implementation details.
+
+### Key Implementation Details
+
+- **Architecture**: Modern Laravel 12 (PHP 8.4+) and Vue 3 (Composition API) single-page application powered by Inertia.js 2.0.
+- **Routing**: Routes are logically separated across `routes/web.php` and `routes/settings.php`. The documentation is served via the `docs` named route.
+- **Backend Core**:
+    - **Controllers**: 12 Controllers handling HTTP requests and returning Inertia responses, delegating business logic to specialized Services or Actions.
+    - **Models**: 13 Eloquent models (Project, Task, User, Team, Role, Comment, ActivityLog, TransactionLog, etc.) with advanced features like Optimistic Locking and Global Scopes.
+    - **Middleware**: Custom security layers including `EnsureRole` (RBAC) and `EnsureTeamAccess`.
+    - **Policies**: 6 Policies providing granular, instance-level authorization for all major entities (ProjectPolicy, TaskPolicy, etc.).
+    - **Form Requests**: Extracted validation logic ensuring clean controllers.
+    - **Services**: Singleton services manage cross-cutting concerns like `LockManager` (concurrency control) and `TransactionManager` (atomic operations with audit trails).
+- **Frontend Core**:
+    - **Structure**: Modular architecture with Inertia pages in `resources/js/pages/` and reusable Vue components in `resources/js/components/`.
+    - **UI Components**: Built using `shadcn-vue` primitives (Card, Tabs, Collapsible, Separator, Badge, etc.) for a consistent, accessible, and responsive experience.
+    - **Styling**: Utility-first design using Tailwind CSS 4.
+
+---
+
 ## Documentation
 
 Additional technical documentation is available in the `docs/` folder:
