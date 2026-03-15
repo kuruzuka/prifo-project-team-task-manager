@@ -17,7 +17,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Optimize task_activity_log queries (was missing composite index)
+        // Optimize task_activity_log queries (my current table is missing composite index)
         Schema::table('task_activity_log', function (Blueprint $table) {
             $table->index(['task_id', 'created_at'], 'idx_task_activity_timeline');
             $table->index(['actor_id', 'created_at'], 'idx_actor_activity_timeline');

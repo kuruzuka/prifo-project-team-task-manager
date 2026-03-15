@@ -79,66 +79,58 @@ const capitalize = (str: string): string => {
     <Head title="Dashboard" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
-        <div class="my-5 ml-5 mr-40">
-            <div class="grid grid-cols-4 gap-7">
-                <div class="sm:col-span-3 md:col-span-3 lg:col-span-1 col-span-3">
-                    <Card class="flex w-full h-[140px]">
-                        <CardHeader>
-                            <CardDescription class="text-lg">Total Projects</CardDescription>
-                            <CardTitle class="text-6xl justify-self-end-safe">{{ stats.totalProjects }}</CardTitle>
-                        </CardHeader>
-                    </Card>
-                </div>
-               <div class="sm:col-span-3 md:col-span-3 lg:col-span-1 col-span-3">
-                    <Card class="flex w-full h-[140px]">
-                        <CardHeader>
-                            <CardDescription class="text-lg">Active Tasks</CardDescription>
-                            <CardTitle class="text-6xl justify-self-end-safe">{{ stats.activeTasks }}</CardTitle>
-                        </CardHeader>
-                    </Card>
-                </div>
-                <div class="sm:col-span-3 md:col-span-3 lg:col-span-1 col-span-3">
-                    <Card class="flex w-full h-[140px]">
-                        <CardHeader>
-                            <CardDescription class="text-lg">Tasks Done</CardDescription>
-                            <CardTitle class="text-6xl justify-self-end-safe">{{ stats.tasksDone }}</CardTitle>
-                        </CardHeader>
-                    </Card>
-                </div>
-                <div class="sm:col-span-3 md:col-span-3 lg:col-span-1 col-span-3">
-                    <Card class="flex w-full h-[140px]">
-                        <CardHeader>
-                            <CardDescription class="text-lg">Team Members</CardDescription>
-                            <CardTitle class="text-6xl justify-self-end-safe">{{ stats.teamMembers }}</CardTitle>
-                        </CardHeader>
-                    </Card>
-                </div>
+        <div class="p-4 sm:p-5 md:p-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 md:gap-7">
+                <Card class="flex w-full h-auto min-h-[100px] sm:min-h-[120px] md:min-h-[140px]">
+                    <CardHeader class="w-full">
+                        <CardDescription class="text-sm sm:text-base md:text-lg">Total Projects</CardDescription>
+                        <CardTitle class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl">{{ stats.totalProjects }}</CardTitle>
+                    </CardHeader>
+                </Card>
+                <Card class="flex w-full h-auto min-h-[100px] sm:min-h-[120px] md:min-h-[140px]">
+                    <CardHeader class="w-full">
+                        <CardDescription class="text-sm sm:text-base md:text-lg">Active Tasks</CardDescription>
+                        <CardTitle class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl">{{ stats.activeTasks }}</CardTitle>
+                    </CardHeader>
+                </Card>
+                <Card class="flex w-full h-auto min-h-[100px] sm:min-h-[120px] md:min-h-[140px]">
+                    <CardHeader class="w-full">
+                        <CardDescription class="text-sm sm:text-base md:text-lg">Tasks Done</CardDescription>
+                        <CardTitle class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl">{{ stats.tasksDone }}</CardTitle>
+                    </CardHeader>
+                </Card>
+                <Card class="flex w-full h-auto min-h-[100px] sm:min-h-[120px] md:min-h-[140px]">
+                    <CardHeader class="w-full">
+                        <CardDescription class="text-sm sm:text-base md:text-lg">Team Members</CardDescription>
+                        <CardTitle class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl">{{ stats.teamMembers }}</CardTitle>
+                    </CardHeader>
+                </Card>
            </div>
-           <div class="grid grid-cols-2 gap-7 mt-10">
-                <div class="col-span-1 h-[500px] border-2 rounded-xl">
+           <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5 md:gap-7 mt-6 sm:mt-8 md:mt-10">
+                <div class="min-h-[300px] sm:min-h-[400px] md:min-h-[500px] max-h-[500px] overflow-auto border-2 rounded-xl">
                     <Table>
                         <TableHeader>
-                            <TableRow class="h-15 hover:bg-transparent">
-                                <TableHead class="text-xl p-5 pl-8">Recent Tasks</TableHead>
+                            <TableRow class="h-12 sm:h-14 md:h-15 hover:bg-transparent">
+                                <TableHead class="text-base sm:text-lg md:text-xl p-3 sm:p-4 md:p-5 pl-4 sm:pl-6 md:pl-8">Recent Tasks</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
                             <TableRow v-for="task in recentTasks" :key="task.id">
-                                <TableCell class="relative p-3">
-                                    <div class="flex justify-between">
-                                        <p class="text-lg font-bold">{{ task.title }}</p>
+                                <TableCell class="relative p-2 sm:p-3">
+                                    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-1 sm:gap-2">
+                                        <p class="text-sm sm:text-base md:text-lg font-bold">{{ task.title }}</p>
                                         <Badge variant="outline"
-                                            class="text-sm"
+                                            class="text-xs sm:text-sm w-fit"
                                             :class="getPriorityClass(task.priority)"
                                             >{{ capitalize(task.priority) }}
                                         </Badge>
                                     </div>
-                                    <p class="text-base mt-2">{{ task.project ?? 'No Project' }}</p>
-                                    <p class="text-sm italic">{{ task.status ?? 'Unknown' }}</p>
+                                    <p class="text-sm sm:text-base mt-1 sm:mt-2">{{ task.project ?? 'No Project' }}</p>
+                                    <p class="text-xs sm:text-sm italic">{{ task.status ?? 'Unknown' }}</p>
                                 </TableCell>
                             </TableRow>
                             <TableRow v-if="recentTasks.length === 0">
-                                <TableCell class="p-5 text-center text-muted-foreground">
+                                <TableCell class="p-4 sm:p-5 text-center text-muted-foreground text-sm sm:text-base">
                                     No recent tasks
                                 </TableCell>
                             </TableRow>
@@ -146,25 +138,25 @@ const capitalize = (str: string): string => {
                     </Table>
                 </div>
 
-                <div class="col-span-1 h-[500px] border-2 rounded-xl">
+                <div class="min-h-[300px] sm:min-h-[400px] md:min-h-[500px] max-h-[500px] overflow-auto border-2 rounded-xl">
                     <Table>
                         <TableHeader>
-                            <TableRow class="h-15 hover:bg-transparent">
-                                <TableHead class="text-xl p-5 pl-8">Project Progress</TableHead>
+                            <TableRow class="h-12 sm:h-14 md:h-15 hover:bg-transparent">
+                                <TableHead class="text-base sm:text-lg md:text-xl p-3 sm:p-4 md:p-5 pl-4 sm:pl-6 md:pl-8">Project Progress</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
                             <TableRow v-for="project in projectProgress" :key="project.id">
-                                <TableCell class="p-5">
-                                    <div class="flex justify-between mb-2">
-                                        <p class="text-lg font-bold">{{ project.name }}</p>
-                                        <p class="text-base mt-2">{{ project.progress }}%</p>
+                                <TableCell class="p-3 sm:p-4 md:p-5">
+                                    <div class="flex justify-between mb-1 sm:mb-2">
+                                        <p class="text-sm sm:text-base md:text-lg font-bold truncate mr-2">{{ project.name }}</p>
+                                        <p class="text-sm sm:text-base mt-1 sm:mt-2 shrink-0">{{ project.progress }}%</p>
                                     </div>
                                     <Progress :model-value="project.progress" />
                                 </TableCell>
                             </TableRow>
                             <TableRow v-if="projectProgress.length === 0">
-                                <TableCell class="p-5 text-center text-muted-foreground">
+                                <TableCell class="p-4 sm:p-5 text-center text-muted-foreground text-sm sm:text-base">
                                     No projects with tasks
                                 </TableCell>
                             </TableRow>

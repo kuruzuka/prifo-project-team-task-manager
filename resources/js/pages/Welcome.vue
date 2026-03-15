@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3';
 import { dashboard, login, register } from '@/routes';
-import { ref, onMounted } from 'vue';
+import { ref } from 'vue';
 
 withDefaults(
     defineProps<{
@@ -13,13 +13,6 @@ withDefaults(
 );
 
 const isMobileMenuOpen = ref(false);
-const isVisible = ref(false);
-
-onMounted(() => {
-    setTimeout(() => {
-        isVisible.value = true;
-    }, 100);
-});
 </script>
 
 <template>
@@ -28,21 +21,18 @@ onMounted(() => {
         <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
     </Head>
 
-    <div class="min-h-screen bg-gradient-to-b from-slate-50 to-white dark:from-slate-950 dark:to-slate-900">
+    <div class="min-h-screen">
         <!-- Animated background blobs -->
-        <div class="pointer-events-none fixed inset-0 overflow-hidden">
+        <div class="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
             <div
-                class="absolute -left-40 -top-40 h-80 w-80 rounded-full bg-purple-300/30 blur-3xl dark:bg-purple-900/20"
-                :class="{ 'animate-pulse': isVisible }"
+                class="absolute -left-20 -top-20 h-48 w-48 rounded-full bg-purple-300/30 blur-3xl sm:h-64 sm:w-64 md:-left-40 md:-top-40 md:h-80 md:w-80 dark:bg-purple-900/20 animate-pulse"
             />
             <div
-                class="absolute -right-40 top-1/4 h-96 w-96 rounded-full bg-blue-300/30 blur-3xl dark:bg-blue-900/20"
-                :class="{ 'animate-pulse': isVisible }"
+                class="absolute -right-20 top-1/4 h-56 w-56 rounded-full bg-blue-300/30 blur-3xl sm:h-72 sm:w-72 md:-right-40 md:h-96 md:w-96 dark:bg-blue-900/20 animate-pulse"
                 style="animation-delay: 1s"
             />
             <div
-                class="absolute bottom-0 left-1/3 h-80 w-80 rounded-full bg-emerald-300/20 blur-3xl dark:bg-emerald-900/20"
-                :class="{ 'animate-pulse': isVisible }"
+                class="absolute bottom-0 left-1/4 h-48 w-48 rounded-full bg-emerald-300/20 blur-3xl sm:h-64 sm:w-64 sm:left-1/3 md:h-80 md:w-80 dark:bg-emerald-900/20 animate-pulse"
                 style="animation-delay: 2s"
             />
         </div>
@@ -159,8 +149,7 @@ onMounted(() => {
         <main class="relative">
             <div class="mx-auto max-w-7xl px-6 py-24 sm:py-32 lg:px-8 lg:py-40">
                 <div
-                    class="mx-auto max-w-3xl text-center transition-all duration-700"
-                    :class="isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'"
+                    class="mx-auto max-w-3xl text-center"
                 >
                     <!-- Badge -->
                     <div class="mb-8 flex justify-center">
@@ -216,8 +205,7 @@ onMounted(() => {
 
                 <!-- Hero Image / Dashboard Preview -->
                 <div
-                    class="mx-auto mt-16 max-w-5xl transition-all delay-300 duration-700 sm:mt-24"
-                    :class="isVisible ? 'translate-y-0 opacity-100' : 'translate-y-12 opacity-0'"
+                    class="mx-auto mt-16 max-w-5xl sm:mt-24"
                 >
                     <div class="relative rounded-2xl bg-slate-900/5 p-2 ring-1 ring-inset ring-slate-900/10 dark:bg-white/5 dark:ring-white/10 lg:rounded-3xl lg:p-3">
                         <div class="overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-slate-900/10 dark:bg-slate-800 dark:ring-white/10">
@@ -290,82 +278,82 @@ onMounted(() => {
                         </p>
                     </div>
 
-                    <div class="mx-auto mt-16 max-w-5xl">
-                        <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+                    <div class="mx-auto mt-12 max-w-5xl sm:mt-16">
+                        <div class="grid gap-4 sm:gap-6 md:gap-8 sm:grid-cols-2 lg:grid-cols-3">
                             <!-- Feature 1 -->
-                            <div class="group relative rounded-2xl bg-white p-8 shadow-sm ring-1 ring-slate-900/5 transition-all hover:shadow-lg dark:bg-slate-800 dark:ring-white/10">
-                                <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-purple-100 text-purple-600 dark:bg-purple-900/50 dark:text-purple-400">
+                            <div class="group relative rounded-xl p-5 sm:rounded-2xl sm:p-6 md:p-8 bg-white shadow-sm ring-1 ring-slate-900/5 transition-all hover:shadow-lg dark:bg-slate-800 dark:ring-white/10">
+                                <div class="mb-3 inline-flex h-10 w-10 sm:mb-4 sm:h-12 sm:w-12 items-center justify-center rounded-lg sm:rounded-xl bg-purple-100 text-purple-600 dark:bg-purple-900/50 dark:text-purple-400">
                                     <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z" />
                                     </svg>
                                 </div>
-                                <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Project Management</h3>
-                                <p class="mt-2 text-slate-600 dark:text-slate-400">
+                                <h3 class="text-base sm:text-lg font-semibold text-slate-900 dark:text-white">Project Management</h3>
+                                <p class="mt-2 text-sm sm:text-base text-slate-600 dark:text-slate-400">
                                     Organize work into projects with teams, managers, and clear timelines.
                                 </p>
                             </div>
 
                             <!-- Feature 2 -->
-                            <div class="group relative rounded-2xl bg-white p-8 shadow-sm ring-1 ring-slate-900/5 transition-all hover:shadow-lg dark:bg-slate-800 dark:ring-white/10">
-                                <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-400">
+                            <div class="group relative rounded-xl p-5 sm:rounded-2xl sm:p-6 md:p-8 bg-white shadow-sm ring-1 ring-slate-900/5 transition-all hover:shadow-lg dark:bg-slate-800 dark:ring-white/10">
+                                <div class="mb-3 inline-flex h-10 w-10 sm:mb-4 sm:h-12 sm:w-12 items-center justify-center rounded-lg sm:rounded-xl bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-400">
                                     <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
                                 </div>
-                                <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Task Tracking</h3>
-                                <p class="mt-2 text-slate-600 dark:text-slate-400">
+                                <h3 class="text-base sm:text-lg font-semibold text-slate-900 dark:text-white">Task Tracking</h3>
+                                <p class="mt-2 text-sm sm:text-base text-slate-600 dark:text-slate-400">
                                     Track tasks with statuses, priorities, progress, and due dates.
                                 </p>
                             </div>
 
                             <!-- Feature 3 -->
-                            <div class="group relative rounded-2xl bg-white p-8 shadow-sm ring-1 ring-slate-900/5 transition-all hover:shadow-lg dark:bg-slate-800 dark:ring-white/10">
-                                <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-100 text-emerald-600 dark:bg-emerald-900/50 dark:text-emerald-400">
+                            <div class="group relative rounded-xl p-5 sm:rounded-2xl sm:p-6 md:p-8 bg-white shadow-sm ring-1 ring-slate-900/5 transition-all hover:shadow-lg dark:bg-slate-800 dark:ring-white/10">
+                                <div class="mb-3 inline-flex h-10 w-10 sm:mb-4 sm:h-12 sm:w-12 items-center justify-center rounded-lg sm:rounded-xl bg-emerald-100 text-emerald-600 dark:bg-emerald-900/50 dark:text-emerald-400">
                                     <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
                                     </svg>
                                 </div>
-                                <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Team Collaboration</h3>
-                                <p class="mt-2 text-slate-600 dark:text-slate-400">
+                                <h3 class="text-base sm:text-lg font-semibold text-slate-900 dark:text-white">Team Collaboration</h3>
+                                <p class="mt-2 text-sm sm:text-base text-slate-600 dark:text-slate-400">
                                     Assign tasks to team members and collaborate through comments.
                                 </p>
                             </div>
 
                             <!-- Feature 4 -->
-                            <div class="group relative rounded-2xl bg-white p-8 shadow-sm ring-1 ring-slate-900/5 transition-all hover:shadow-lg dark:bg-slate-800 dark:ring-white/10">
-                                <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-amber-100 text-amber-600 dark:bg-amber-900/50 dark:text-amber-400">
+                            <div class="group relative rounded-xl p-5 sm:rounded-2xl sm:p-6 md:p-8 bg-white shadow-sm ring-1 ring-slate-900/5 transition-all hover:shadow-lg dark:bg-slate-800 dark:ring-white/10">
+                                <div class="mb-3 inline-flex h-10 w-10 sm:mb-4 sm:h-12 sm:w-12 items-center justify-center rounded-lg sm:rounded-xl bg-amber-100 text-amber-600 dark:bg-amber-900/50 dark:text-amber-400">
                                     <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z" />
                                     </svg>
                                 </div>
-                                <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Activity Logging</h3>
-                                <p class="mt-2 text-slate-600 dark:text-slate-400">
+                                <h3 class="text-base sm:text-lg font-semibold text-slate-900 dark:text-white">Activity Logging</h3>
+                                <p class="mt-2 text-sm sm:text-base text-slate-600 dark:text-slate-400">
                                     Complete audit trail of all changes for transparency and accountability.
                                 </p>
                             </div>
 
                             <!-- Feature 5 -->
-                            <div class="group relative rounded-2xl bg-white p-8 shadow-sm ring-1 ring-slate-900/5 transition-all hover:shadow-lg dark:bg-slate-800 dark:ring-white/10">
-                                <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-rose-100 text-rose-600 dark:bg-rose-900/50 dark:text-rose-400">
+                            <div class="group relative rounded-xl p-5 sm:rounded-2xl sm:p-6 md:p-8 bg-white shadow-sm ring-1 ring-slate-900/5 transition-all hover:shadow-lg dark:bg-slate-800 dark:ring-white/10">
+                                <div class="mb-3 inline-flex h-10 w-10 sm:mb-4 sm:h-12 sm:w-12 items-center justify-center rounded-lg sm:rounded-xl bg-rose-100 text-rose-600 dark:bg-rose-900/50 dark:text-rose-400">
                                     <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
                                     </svg>
                                 </div>
-                                <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Role-Based Access</h3>
-                                <p class="mt-2 text-slate-600 dark:text-slate-400">
+                                <h3 class="text-base sm:text-lg font-semibold text-slate-900 dark:text-white">Role-Based Access</h3>
+                                <p class="mt-2 text-sm sm:text-base text-slate-600 dark:text-slate-400">
                                     Control access with Admin, Manager, and Member roles.
                                 </p>
                             </div>
 
                             <!-- Feature 6 -->
-                            <div class="group relative rounded-2xl bg-white p-8 shadow-sm ring-1 ring-slate-900/5 transition-all hover:shadow-lg dark:bg-slate-800 dark:ring-white/10">
-                                <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-100 text-indigo-600 dark:bg-indigo-900/50 dark:text-indigo-400">
+                            <div class="group relative rounded-xl p-5 sm:rounded-2xl sm:p-6 md:p-8 bg-white shadow-sm ring-1 ring-slate-900/5 transition-all hover:shadow-lg dark:bg-slate-800 dark:ring-white/10">
+                                <div class="mb-3 inline-flex h-10 w-10 sm:mb-4 sm:h-12 sm:w-12 items-center justify-center rounded-lg sm:rounded-xl bg-indigo-100 text-indigo-600 dark:bg-indigo-900/50 dark:text-indigo-400">
                                     <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5m.75-9l3-3 2.148 2.148A12.061 12.061 0 0116.5 7.605" />
                                     </svg>
                                 </div>
-                                <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Dashboard Analytics</h3>
-                                <p class="mt-2 text-slate-600 dark:text-slate-400">
+                                <h3 class="text-base sm:text-lg font-semibold text-slate-900 dark:text-white">Dashboard Analytics</h3>
+                                <p class="mt-2 text-sm sm:text-base text-slate-600 dark:text-slate-400">
                                     Real-time overview of tasks, projects, and team progress.
                                 </p>
                             </div>
@@ -384,32 +372,32 @@ onMounted(() => {
                         </p>
                     </div>
 
-                    <div class="mx-auto mt-16 max-w-4xl">
-                        <div class="grid gap-8 sm:grid-cols-3">
+                    <div class="mx-auto mt-12 max-w-4xl sm:mt-16">
+                        <div class="grid gap-8 sm:gap-6 md:gap-8 grid-cols-1 sm:grid-cols-3">
                             <div class="text-center">
-                                <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-purple-600 text-2xl font-bold text-white">
+                                <div class="mx-auto flex h-12 w-12 sm:h-14 sm:w-14 md:h-16 md:w-16 items-center justify-center rounded-full bg-purple-600 text-xl sm:text-2xl font-bold text-white">
                                     1
                                 </div>
-                                <h3 class="mt-6 text-lg font-semibold text-slate-900 dark:text-white">Create a project</h3>
-                                <p class="mt-2 text-slate-600 dark:text-slate-400">
+                                <h3 class="mt-4 sm:mt-6 text-base sm:text-lg font-semibold text-slate-900 dark:text-white">Create a project</h3>
+                                <p class="mt-2 text-sm sm:text-base text-slate-600 dark:text-slate-400">
                                     Set up your project with a name, timeline, and assign a team.
                                 </p>
                             </div>
                             <div class="text-center">
-                                <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-purple-600 text-2xl font-bold text-white">
+                                <div class="mx-auto flex h-12 w-12 sm:h-14 sm:w-14 md:h-16 md:w-16 items-center justify-center rounded-full bg-purple-600 text-xl sm:text-2xl font-bold text-white">
                                     2
                                 </div>
-                                <h3 class="mt-6 text-lg font-semibold text-slate-900 dark:text-white">Add tasks</h3>
-                                <p class="mt-2 text-slate-600 dark:text-slate-400">
+                                <h3 class="mt-4 sm:mt-6 text-base sm:text-lg font-semibold text-slate-900 dark:text-white">Add tasks</h3>
+                                <p class="mt-2 text-sm sm:text-base text-slate-600 dark:text-slate-400">
                                     Break down work into tasks with priorities and due dates.
                                 </p>
                             </div>
                             <div class="text-center">
-                                <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-purple-600 text-2xl font-bold text-white">
+                                <div class="mx-auto flex h-12 w-12 sm:h-14 sm:w-14 md:h-16 md:w-16 items-center justify-center rounded-full bg-purple-600 text-xl sm:text-2xl font-bold text-white">
                                     3
                                 </div>
-                                <h3 class="mt-6 text-lg font-semibold text-slate-900 dark:text-white">Track progress</h3>
-                                <p class="mt-2 text-slate-600 dark:text-slate-400">
+                                <h3 class="mt-4 sm:mt-6 text-base sm:text-lg font-semibold text-slate-900 dark:text-white">Track progress</h3>
+                                <p class="mt-2 text-sm sm:text-base text-slate-600 dark:text-slate-400">
                                     Monitor task status and team progress from your dashboard.
                                 </p>
                             </div>
@@ -419,9 +407,9 @@ onMounted(() => {
             </section>
 
             <!-- Benefits Section -->
-            <section id="benefits" class="relative py-24 sm:py-32">
+            <section id="benefits" class="relative py-16 sm:py-24 md:py-32">
                 <div class="mx-auto max-w-7xl px-6 lg:px-8">
-                    <div class="mx-auto grid max-w-5xl gap-16 lg:grid-cols-2 lg:gap-24">
+                    <div class="mx-auto grid max-w-5xl gap-10 sm:gap-12 md:gap-16 md:grid-cols-2 lg:gap-24">
                         <div>
                             <h2 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl dark:text-white">
                                 Built for reliability
@@ -438,8 +426,8 @@ onMounted(() => {
                                         </svg>
                                     </div>
                                     <div>
-                                        <dt class="font-semibold text-slate-900 dark:text-white">Optimistic Locking</dt>
-                                        <dd class="mt-1 text-slate-600 dark:text-slate-400">Prevents data conflicts when multiple users edit simultaneously.</dd>
+                                        <dt class="text-sm sm:text-base font-semibold text-slate-900 dark:text-white">Optimistic Locking</dt>
+                                        <dd class="mt-1 text-sm sm:text-base text-slate-600 dark:text-slate-400">Prevents data conflicts when multiple users edit simultaneously.</dd>
                                     </div>
                                 </div>
                                 <div class="flex gap-4">
@@ -449,8 +437,8 @@ onMounted(() => {
                                         </svg>
                                     </div>
                                     <div>
-                                        <dt class="font-semibold text-slate-900 dark:text-white">Complete Audit Trail</dt>
-                                        <dd class="mt-1 text-slate-600 dark:text-slate-400">Every change is logged with timestamps and actor information.</dd>
+                                        <dt class="text-sm sm:text-base font-semibold text-slate-900 dark:text-white">Complete Audit Trail</dt>
+                                        <dd class="mt-1 text-sm sm:text-base text-slate-600 dark:text-slate-400">Every change is logged with timestamps and actor information.</dd>
                                     </div>
                                 </div>
                                 <div class="flex gap-4">
@@ -460,17 +448,17 @@ onMounted(() => {
                                         </svg>
                                     </div>
                                     <div>
-                                        <dt class="font-semibold text-slate-900 dark:text-white">Two-Factor Authentication</dt>
-                                        <dd class="mt-1 text-slate-600 dark:text-slate-400">Secure your account with TOTP-based 2FA protection.</dd>
+                                        <dt class="text-sm sm:text-base font-semibold text-slate-900 dark:text-white">Two-Factor Authentication</dt>
+                                        <dd class="mt-1 text-sm sm:text-base text-slate-600 dark:text-slate-400">Secure your account with TOTP-based 2FA protection.</dd>
                                     </div>
                                 </div>
                             </dl>
                         </div>
 
                         <div class="flex items-center">
-                            <div class="relative w-full rounded-2xl bg-gradient-to-br from-purple-500 to-blue-600 p-1">
-                                <div class="rounded-xl bg-slate-900 p-8">
-                                    <div class="space-y-4 font-mono text-sm">
+                            <div class="relative w-full rounded-xl sm:rounded-2xl bg-gradient-to-br from-purple-500 to-blue-600 p-1">
+                                <div class="rounded-lg sm:rounded-xl bg-slate-900 p-4 sm:p-6 md:p-8 overflow-x-auto">
+                                    <div class="space-y-3 sm:space-y-4 font-mono text-xs sm:text-sm min-w-[280px]">
                                         <div class="text-slate-400">// Concurrency protection</div>
                                         <div>
                                             <span class="text-purple-400">$task</span><span class="text-slate-300">-></span><span class="text-blue-400">updateWithVersionCheck</span><span class="text-slate-300">([</span>

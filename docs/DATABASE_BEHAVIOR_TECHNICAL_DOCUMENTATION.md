@@ -63,7 +63,39 @@ use HasActivityLogs;
 
 ---
 
-### 1.3. Where the Feature Is Implemented
+### 1.3. Where It's Used in User Actions
+
+Activity logging is triggered automatically when users perform actions that modify data. Here's a complete list of user actions that create activity logs:
+
+#### TaskController Actions
+
+| User Action | Method | Activity Type | What's Logged |
+|-------------|--------|---------------|---------------|
+| Create a task | `store()` | `task_created` | Task title, project ID |
+| Edit task details | `update()` | `task_updated` | Changed fields with old/new values |
+| Change task status | `updateStatus()` | `status_changed` | Old status → New status |
+| Change task priority | `updatePriority()` | `priority_changed` | Old priority → New priority |
+| Update progress | `updateProgress()` | `progress_updated` | Old progress % → New progress % |
+| Assign user to task | `addAssignee()` | `assignee_added` | User ID, user name |
+| Unassign user from task | `removeAssignee()` | `assignee_removed` | User ID, user name |
+
+#### CommentController Actions
+
+| User Action | Method | Activity Type | What's Logged |
+|-------------|--------|---------------|---------------|
+| Add comment to task | `store()` | `comment_added` | Comment ID, preview (first 100 chars) |
+| Edit a comment | `update()` | `comment_edited` | Comment ID, old/new preview |
+
+#### ProjectController Actions
+
+| User Action | Method | Activity Type | What's Logged |
+|-------------|--------|---------------|---------------|
+| Edit project details | `update()` | `project_updated` | Changed fields with old/new values |
+| Update project teams | `updateTeams()` | `teams_updated` | Teams added/removed, old/new team lists |
+
+---
+
+### 1.4. Where the Feature Is Implemented
 
 #### HasActivityLogs Trait
 
@@ -110,7 +142,7 @@ trait HasActivityLogs
 
 ---
 
-### 1.4. Execution Flow
+### 1.5. Execution Flow
 
 ```
 User updates a task's status
@@ -132,7 +164,7 @@ Row inserted into `task_activity_log` table
 
 ---
 
-### 1.5. Code References
+### 1.6. Code References
 
 #### Step 1: Controller calls update with logging
 
@@ -178,7 +210,7 @@ public function logTaskActivity(string $activityType, ?array $metadata = null, ?
 
 ---
 
-### 1.6. Database Interaction
+### 1.7. Database Interaction
 
 #### activity_logs table
 
@@ -263,7 +295,36 @@ use HasOptimisticLocking;
 
 ---
 
-### 2.3. Where the Feature Is Implemented
+### 2.3. Where It's Used in User Actions
+
+Optimistic locking protects updates from concurrent modification conflicts. The frontend sends a `version` field with each request, and the backend verifies it hasn't changed.
+
+#### TaskController Actions Using Version Check
+
+| User Action | Method | Location | What Happens on Conflict |
+|-------------|--------|----------|-------------------------|
+| Edit task details | `update()` | [TaskController.php#L598](../app/Http/Controllers/TaskController.php#L598) | Returns "This record was modified by another user" |
+| Change status | `updateStatus()` | [TaskController.php#L672](../app/Http/Controllers/TaskController.php#L672) | Returns validation error, user must refresh |
+| Change priority | `updatePriority()` | [TaskController.php#L707](../app/Http/Controllers/TaskController.php#L707) | Returns validation error, user must refresh |
+| Update progress | `updateProgress()` | [TaskController.php#L740](../app/Http/Controllers/TaskController.php#L740) | Returns validation error, user must refresh |
+
+#### How the Frontend Participates
+
+The Vue/Inertia frontend must include the `version` field when submitting forms:
+
+```typescript
+// Example: Updating task status
+router.patch(route('tasks.updateStatus', task.id), {
+    status_id: newStatusId,
+    version: task.version,  // ← Current version from page props
+});
+```
+
+> **Note:** Project updates (`ProjectController::update()`) do not currently use optimistic locking — they could be enhanced to do so if concurrent editing becomes an issue.
+
+---
+
+### 2.4. Where the Feature Is Implemented
 
 **File:** [app/Concerns/HasOptimisticLocking.php](../app/Concerns/HasOptimisticLocking.php)
 
@@ -281,7 +342,7 @@ The trait provides:
 
 ---
 
-### 2.4. Execution Flow
+### 2.5. Execution Flow
 
 ```
 Frontend sends update request with version
@@ -311,7 +372,7 @@ Check: Current DB version == Expected version?
 
 ---
 
-### 2.5. Code References
+### 2.6. Code References
 
 #### Step 1: Controller uses withVersionCheck
 
@@ -410,7 +471,7 @@ public function saveWithVersionCheck(?int $expectedVersion = null, array $option
 
 ---
 
-### 2.6. Database Interaction
+### 2.7. Database Interaction
 
 #### Version column migration
 
@@ -450,7 +511,7 @@ END;
 
 ---
 
-### 2.7. Concurrency Scenario
+### 2.8. Concurrency Scenario
 
 ```
 TIME    USER A                          USER B
@@ -466,7 +527,7 @@ T6      ✗ REJECTED!
 
 ---
 
-### 2.8. Exception Handling
+### 2.9. Exception Handling
 
 **File:** [app/Exceptions/StaleModelException.php](../app/Exceptions/StaleModelException.php)
 
@@ -532,7 +593,54 @@ use PreventsHardDeletes;
 
 ---
 
-### 3.3. Where the Feature Is Implemented
+### 3.3. Where It's Used in User Actions
+
+Soft delete is triggered when users delete tasks or projects. Hard delete is **always blocked** by the `PreventsHardDeletes` trait.
+
+#### User Actions That Trigger Soft Delete
+
+| User Action | Controller Method | What Happens |
+|-------------|-------------------|-------------|
+| Delete a task | `TaskController::destroy()` | Sets `deleted_at` timestamp, task hidden from normal queries |
+| Delete a project | `ProjectController::destroy()` | Sets `deleted_at` timestamp (blocked if project has active tasks by trigger) |
+| Delete user account | `ProfileController::destroy()` | User soft-deleted, can be restored by admin |
+
+#### Hard Delete Prevention
+
+When any code attempts `$task->forceDelete()` or `$project->forceDelete()`:
+
+1. The `PreventsHardDeletes` trait intercepts the operation
+2. A **security warning** is logged with model details and user ID
+3. The operation is **cancelled** — no data is deleted
+4. This ensures **complete audit trail preservation**
+
+```php
+// This will be BLOCKED:
+$task->forceDelete();  // ✗ Logged as security warning, no deletion
+
+// This works (soft delete):
+$task->delete();       // ✓ Sets deleted_at, preserves data
+```
+
+#### Querying Soft-Deleted Records
+
+```php
+// Normal query (excludes deleted)
+Task::all();
+
+// Include deleted
+Task::withTrashed()->get();
+
+// Only deleted
+Task::onlyTrashed()->get();
+
+// Restore a soft-deleted record
+$task->restore();
+```
+
+---
+
+### 3.4. Where the Feature Is Implemented
 
 **File:** [app/Concerns/PreventsHardDeletes.php](../app/Concerns/PreventsHardDeletes.php)
 
@@ -580,7 +688,7 @@ trait PreventsHardDeletes
 
 ---
 
-### 3.4. Execution Flow
+### 3.5. Execution Flow
 
 ```
 Developer calls $task->forceDelete()
@@ -598,7 +706,7 @@ Task remains in database (no deletion occurs)
 
 ---
 
-### 3.5. Code References
+### 3.6. Code References
 
 #### Soft Delete Usage in Controller
 
@@ -622,7 +730,7 @@ public function destroy(Request $request, int $task): RedirectResponse
 
 ---
 
-### 3.6. Database Interaction
+### 3.7. Database Interaction
 
 When `SoftDeletes` is used, the table has a `deleted_at` column:
 
@@ -671,7 +779,46 @@ Think of database triggers like automatic rules that a robot follows. When somet
 
 ---
 
-### 4.3. Trigger 1: Version Auto-Increment
+### 4.3. When Triggers Are Activated by User Actions
+
+Database triggers fire **automatically** when specific database operations occur. Users don't call them directly — they activate as a side effect of user actions:
+
+#### Version Increment Triggers
+
+| User Action | Trigger Activated | Result |
+|-------------|-------------------|--------|
+| Edit task details | `trg_tasks_increment_version` | `version` column increments (e.g., 5 → 6) |
+| Change task status | `trg_tasks_increment_version` | `version` column increments |
+| Update task priority | `trg_tasks_increment_version` | `version` column increments |
+| Update task progress | `trg_tasks_increment_version` | `version` column increments |
+| Edit project details | `trg_projects_increment_version` | Project `version` increments |
+
+#### Status Transition Validation
+
+| User Action | Trigger | Result |
+|-------------|---------|--------|
+| Change status: To Do → In Progress | `trg_tasks_validate_status_transition` | ✓ **Allowed** |
+| Change status: To Do → Done | `trg_tasks_validate_status_transition` | ✗ **BLOCKED** — Returns SQLSTATE 45000 error |
+| Change status: In Progress → In Review | `trg_tasks_validate_status_transition` | ✓ **Allowed** |
+| Change status: Done → To Do | `trg_tasks_validate_status_transition` | ✗ **BLOCKED** — Must go through In Review first |
+
+#### Progress Auto-Completion
+
+| User Action | Trigger | Result |
+|-------------|---------|--------|
+| Change status to Done | `trg_tasks_auto_complete_progress` | Progress automatically set to **100%** |
+| Change status back to To Do | `trg_tasks_auto_complete_progress` | Progress automatically set to **0%** |
+
+#### Data Integrity Protection
+
+| User Action | Trigger | Result |
+|-------------|---------|--------|
+| Create task in deleted project | `trg_prevent_orphan_tasks` | ✗ **BLOCKED** — "Cannot create task in a deleted project" |
+| Delete project with active tasks | `trg_prevent_project_delete_with_tasks` | ✗ **BLOCKED** — "Cannot delete project with active tasks" |
+
+---
+
+### 4.4. Trigger 1: Version Auto-Increment
 
 **Purpose:** Enable optimistic locking without manual version management.
 
@@ -697,7 +844,7 @@ Row is updated with new version value
 
 ---
 
-### 4.4. Trigger 2: Status Transition Validation
+### 4.5. Trigger 2: Status Transition Validation
 
 **Purpose:** Enforce workflow rules — tasks must follow a proper lifecycle.
 
@@ -794,7 +941,7 @@ try {
 
 ---
 
-### 4.5. Trigger 3: Auto-Complete Progress
+### 4.6. Trigger 3: Auto-Complete Progress
 
 **Purpose:** Keep progress consistent with status.
 
@@ -821,7 +968,7 @@ END;
 
 ---
 
-### 4.6. Trigger 4: Prevent Orphan Tasks
+### 4.7. Trigger 4: Prevent Orphan Tasks
 
 **Purpose:** Block creating tasks in soft-deleted projects.
 
@@ -845,7 +992,7 @@ END;
 
 ---
 
-### 4.7. Trigger 5: Prevent Project Delete with Tasks
+### 4.8. Trigger 5: Prevent Project Delete with Tasks
 
 **Purpose:** Block soft-deleting projects that have active tasks.
 
@@ -895,7 +1042,52 @@ Stored procedures are pre-written programs that live inside the database. When L
 
 ---
 
-### 5.3. Procedure 1: Assign Task with Audit
+### 5.3. Where Stored Procedures Are Called
+
+Stored procedures are called from Laravel via the `StoredProcedureService`. Here's where each procedure is used:
+
+#### sp_assign_task_with_audit
+
+| Where Called | When | Purpose |
+|--------------|------|--------|
+| `StoredProcedureService::assignTaskWithAudit()` | Alternative to Laravel-based assignment | Atomic assignment at database level with row lock |
+
+> **Note:** Currently, task assignment primarily uses `TaskController::addAssignee()` with `withLockedTransaction()`. The stored procedure is available for batch operations or direct database access.
+
+#### sp_bulk_update_task_status
+
+| Where Called | When | Purpose |
+|--------------|------|--------|
+| `StoredProcedureService::bulkUpdateTaskStatus()` | Bulk status changes | Update multiple tasks atomically with validation per task |
+
+#### sp_transfer_project_ownership
+
+| Where Called | When | Purpose |
+|--------------|------|--------|
+| `StoredProcedureService::transferProjectOwnership()` | Manager reassignment | Transfer project manager with full audit trail |
+
+#### sp_archive_completed_tasks
+
+| Where Called | When | Purpose |
+|--------------|------|--------|
+| `ArchiveCompletedTasks` command | `php artisan tasks:archive` | Batch soft-delete old completed tasks |
+| Scheduled task | Daily (if configured) | Automatic cleanup of tasks completed > 30 days ago |
+
+**Example: Running the archive command:**
+```bash
+# Archive tasks completed more than 30 days ago
+php artisan tasks:archive
+
+# Archive tasks completed more than 60 days ago
+php artisan tasks:archive --days=60
+
+# Preview without archiving
+php artisan tasks:archive --dry-run
+```
+
+---
+
+### 5.4. Procedure 1: Assign Task with Audit
 
 **Purpose:** Assign a user to a task atomically, preventing race conditions.
 
@@ -965,7 +1157,7 @@ END;
 
 ---
 
-### 5.4. Calling Stored Procedures from Laravel
+### 5.5. Calling Stored Procedures from Laravel
 
 **File:** [app/Services/StoredProcedureService.php](../app/Services/StoredProcedureService.php)
 
@@ -1011,7 +1203,7 @@ if ($procedureService->isSuccess($result)) {
 
 ---
 
-### 5.5. Procedure 2: Bulk Update Task Status
+### 5.6. Procedure 2: Bulk Update Task Status
 
 **Purpose:** Update multiple tasks atomically with validation.
 
@@ -1072,7 +1264,51 @@ The `TransactionManager` provides:
 
 ---
 
-### 6.3. Transaction Log Table
+### 6.3. Where Transactions Are Used in User Actions
+
+Transactions are used throughout the application to ensure data integrity. Here's a complete map of user actions that use transactions:
+
+#### TaskController — All Modifying Actions Use Transactions
+
+| User Action | Transaction Type | Method Used | Logged |
+|-------------|-----------------|-------------|--------|
+| Create task | `DB::transaction()` | Direct | No |
+| Edit task details | `withVersionCheck()` → `withTransaction()` | Trait | Yes |
+| Change status | `withVersionCheck()` → `withTransaction()` | Trait | Yes |
+| Change priority | `withVersionCheck()` → `withTransaction()` | Trait | Yes |
+| Update progress | `withVersionCheck()` → `withTransaction()` | Trait | Yes |
+| Add assignee | `withLockedTransaction()` | Trait | Yes |
+| Remove assignee | `withLockedTransaction()` | Trait | Yes |
+
+#### CommentController — Comment Operations
+
+| User Action | Transaction Type | Method Used | Logged |
+|-------------|-----------------|-------------|--------|
+| Add comment | `withTransaction()` | Trait | Yes |
+| Edit comment | `withTransaction()` | Trait | Yes |
+
+#### Why Transactions Matter Here
+
+1. **Atomicity**: If logging fails, the update is rolled back too
+2. **Consistency**: Either all changes succeed or none do
+3. **Audit Trail**: Every transaction creates a `TransactionLog` entry with:
+   - `transaction_id` (UUID)
+   - `old_values` / `new_values` (JSON snapshots)
+   - `duration_ms` (performance tracking)
+   - `status` (started, committed, failed, rolled_back)
+
+#### Transaction Log Use Cases
+
+| Scenario | What Gets Logged |
+|----------|------------------|
+| Successful task update | status=committed, duration_ms, new_values |
+| Concurrent edit conflict | status=failed, error_message="Record was modified by another user" |
+| Invalid status transition | status=failed, error_message from database trigger |
+| Database connection error | status=rolled_back, error_message |
+
+---
+
+### 6.4. Transaction Log Table
 
 **File:** [database/migrations/2026_03_12_000002_create_transaction_logs_table.php](../database/migrations/2026_03_12_000002_create_transaction_logs_table.php)
 
@@ -1097,7 +1333,7 @@ The `TransactionManager` provides:
 
 ---
 
-### 6.4. Execution Flow
+### 6.5. Execution Flow
 
 ```
 Controller calls withTransaction()
@@ -1132,7 +1368,7 @@ DB::transaction() wraps the callback
 
 ---
 
-### 6.5. Code References
+### 6.6. Code References
 
 #### TransactionManager execute method
 
@@ -1205,7 +1441,7 @@ public function execute(
 
 ---
 
-### 6.6. Usage Example in Controller
+### 6.7. Usage Example in Controller
 
 **File:** [app/Http/Controllers/TaskController.php](../app/Http/Controllers/TaskController.php#L639-L660)
 
@@ -1264,7 +1500,71 @@ The `LockManager` provides:
 
 ---
 
-### 7.3. Database Row Lock
+### 7.3. Where Locking Is Used in the Application
+
+Pessimistic locking is used for operations that have **check-then-act** patterns where race conditions could cause data corruption or duplicate entries.
+
+#### TaskController — Assignment Operations
+
+| Action | Method | Location | Why Locking Is Needed |
+|--------|--------|----------|----------------------|
+| **Add Task Assignee** | `addAssignee()` | [TaskController.php#L774](../app/Http/Controllers/TaskController.php#L774) | Prevents two users from assigning the same person simultaneously |
+| **Remove Task Assignee** | `removeAssignee()` | [TaskController.php#L811](../app/Http/Controllers/TaskController.php#L811) | Prevents race condition when multiple users unassign simultaneously |
+
+**Example — Add Assignee with Lock:**
+
+```php
+return $this->withLockedTransaction(
+    operationName: 'Add Task Assignee',
+    entity: $task,
+    callback: function ($lockedTask) use ($validated, $user, $request) {
+        // Check if already assigned (after acquiring lock to prevent race)
+        if ($lockedTask->assignedUsers()->where('user_id', $validated['user_id'])->exists()) {
+            return back()->withErrors(['user_id' => 'User is already assigned to this task.']);
+        }
+
+        $lockedTask->assignedUsers()->attach($validated['user_id'], [
+            'assigned_by' => $request->user()->id,
+            'assigned_date' => now(),
+        ]);
+
+        $lockedTask->logTaskActivity('assignee_added', [
+            'user_id' => $user->id,
+            'user_name' => $user->first_name . ' ' . $user->last_name,
+        ]);
+
+        return back()->with('success', "{$user->first_name} {$user->last_name} has been assigned.");
+    },
+    operationType: TransactionLog::TYPE_ASSIGN
+);
+```
+
+#### Stored Procedure — Database-Level Lock
+
+The `sp_assign_task_with_audit` stored procedure also uses `SELECT FOR UPDATE` to prevent duplicate assignments at the database level:
+
+```sql
+-- Check if already assigned (using SELECT FOR UPDATE for concurrency)
+ELSEIF EXISTS (
+    SELECT 1 FROM task_assignments
+    WHERE task_id = p_task_id AND user_id = p_user_id
+    FOR UPDATE
+) THEN
+    SET p_status = 'ALREADY_ASSIGNED';
+```
+
+#### Why These Operations Need Locks (Not Optimistic Locking)
+
+| Scenario | Problem Without Lock | Solution |
+|----------|---------------------|----------|
+| Two admins assign same user | Both check "is assigned?" → Both get FALSE → Both insert → **Duplicate entry** | Lock the task row first |
+| Admin A assigns, Admin B unassigns simultaneously | Race condition on `task_assignments` pivot table | Lock ensures sequential execution |
+
+> **Note:** Status/priority/progress updates use **optimistic locking** (version checks) instead, because conflicts there are recoverable — the user simply refreshes and retries. Assignment conflicts are not recoverable without data cleanup.
+
+---
+
+### 7.4. Database Row Lock
 
 **File:** [app/Services/LockManager.php](../app/Services/LockManager.php#L43-L73)
 
@@ -1307,7 +1607,7 @@ public function withRowLock(Model $model, Closure $callback, ?int $waitTimeout =
 
 ---
 
-### 7.4. Advisory Lock (Cache-based)
+### 7.5. Advisory Lock (Cache-based)
 
 **Purpose:** For longer operations or cross-transaction coordination.
 
@@ -1341,7 +1641,7 @@ public function withAdvisoryLock(
 
 ---
 
-### 7.5. Usage via UsesConcurrencyControl
+### 7.6. Usage via UsesConcurrencyControl
 
 **File:** [app/Concerns/UsesConcurrencyControl.php](../app/Concerns/UsesConcurrencyControl.php#L72-L90)
 
@@ -1365,7 +1665,7 @@ protected function withLockedTransaction(
 
 ---
 
-### 7.6. Exception Handling
+### 7.7. Exception Handling
 
 **File:** [app/Exceptions/LockAcquisitionException.php](../app/Exceptions/LockAcquisitionException.php)
 
@@ -1422,7 +1722,46 @@ Think of this trait like a helper that sits next to a controller. When the contr
 
 ---
 
-### 8.4. Methods Provided
+### 8.4. Where the Trait Methods Are Used
+
+The `UsesConcurrencyControl` trait provides five methods. Here's exactly where each method is called:
+
+#### `withVersionCheck()` — Optimistic Locking Operations
+
+| Controller | Method | User Action |
+|------------|--------|-------------|
+| TaskController | `update()` | Edit task details (title, description, priority, due_date) |
+| TaskController | `updateStatus()` | Change task status |
+| TaskController | `updatePriority()` | Change task priority |
+| TaskController | `updateProgress()` | Update progress percentage |
+
+#### `withLockedTransaction()` — Pessimistic Locking Operations
+
+| Controller | Method | User Action |
+|------------|--------|-------------|
+| TaskController | `addAssignee()` | Assign user to task |
+| TaskController | `removeAssignee()` | Unassign user from task |
+
+#### `withTransaction()` — Simple Logged Transactions
+
+| Controller | Method | User Action |
+|------------|--------|-------------|
+| CommentController | `store()` | Add comment to task |
+| CommentController | `update()` | Edit existing comment |
+
+#### Why Different Methods for Different Actions
+
+| Method | Best For | Example |
+|--------|----------|--------|
+| `withVersionCheck()` | High-frequency updates where conflicts are rare but possible | Status changes, progress updates |
+| `withLockedTransaction()` | Check-then-act operations prone to race conditions | Assignment operations |
+| `withTransaction()` | Operations needing atomicity but no concurrent edit concerns | Adding comments |
+| `withSimpleTransaction()` | Quick operations without audit logging | (Not currently used) |
+| `withBatchTransaction()` | Multiple operations that must all succeed | (Available for future bulk operations) |
+
+---
+
+### 8.5. Methods Provided (Summary)
 
 | Method | Purpose | Uses |
 |--------|---------|------|
@@ -1434,7 +1773,7 @@ Think of this trait like a helper that sits next to a controller. When the contr
 
 ---
 
-### 8.5. Complete Execution Flow for Task Update
+### 8.6. Complete Execution Flow for Task Update
 
 ```
 1. Frontend sends PUT /tasks/42/status
@@ -1490,7 +1829,7 @@ Think of this trait like a helper that sits next to a controller. When the contr
 
 ---
 
-### 8.6. Error Handling Flow
+### 8.7. Error Handling Flow
 
 ```
 Exception thrown during callback
