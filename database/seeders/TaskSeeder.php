@@ -15,7 +15,7 @@ class TaskSeeder extends Seeder
     public function run(): void
     {
         $statuses = TaskStatus::all();
-        $projects = Project::all();
+        $projects = Project::withoutGlobalScopes()->get();
 
         // Predefined task templates for realistic data
         $taskTemplates = [
@@ -38,7 +38,7 @@ class TaskSeeder extends Seeder
             $selectedTemplates = collect($taskTemplates)->shuffle()->take(8);
 
             foreach ($selectedTemplates as $template) {
-                Task::firstOrCreate(
+                Task::withoutGlobalScopes()->firstOrCreate(
                     [
                         'project_id' => $project->id,
                         'title' => $template['title'],

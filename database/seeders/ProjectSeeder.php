@@ -57,7 +57,7 @@ class ProjectSeeder extends Seeder
             $startDate = fake()->dateTimeBetween('-2 months', 'now');
             $endDate = fake()->dateTimeBetween($startDate, '+4 months');
 
-            $project = Project::firstOrCreate(
+            $project = Project::withoutGlobalScopes()->firstOrCreate(
                 ['name' => $projectData['name']],
                 [
                     'description' => $projectData['description'],

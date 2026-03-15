@@ -14,7 +14,7 @@ class CommentSeeder extends Seeder
      */
     public function run(): void
     {
-        $tasks = Task::all();
+        $tasks = Task::withoutGlobalScopes()->get();
         $users = User::all();
 
         if ($users->isEmpty()) {
