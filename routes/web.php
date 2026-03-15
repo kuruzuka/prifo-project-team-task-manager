@@ -57,6 +57,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('users/{user}/tasks', [TaskController::class, 'forUser'])->name('users.tasks');
     Route::get('users/{user}/teams', [TeamController::class, 'forUser'])->name('users.teams');
 
+    // Documentation
+    Route::inertia('docs', 'docs/Index')->name('docs');
+
     // Admin-only: management routes
     Route::middleware('role:Admin')->prefix('admin')->name('admin.')->group(function () {
         // Audit logs
