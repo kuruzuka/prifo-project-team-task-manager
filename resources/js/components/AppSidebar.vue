@@ -139,14 +139,15 @@ const adminNavItems = computed<NavItem[]>(() => {
 
 const footerNavItems: NavItem[] = [
     {
+        title: 'Developer Docs',
+        href: '/docs',
+        icon: BookOpen,
+        target: '_blank',
+    },
+    {
         title: 'Repository',
         href: 'https://github.com/laravel/vue-starter-kit',
         icon: FolderGit2,
-    },
-    {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#vue',
-        icon: BookOpen,
     },
 ];
 </script>
