@@ -31,7 +31,7 @@ class TeamSeeder extends Seeder
         $users = User::all();
 
         foreach ($teams as $teamData) {
-            $team = Team::firstOrCreate(
+            $team = Team::withoutGlobalScopes()->firstOrCreate(
                 ['name' => $teamData['name']],
                 ['description' => $teamData['description']]
             );

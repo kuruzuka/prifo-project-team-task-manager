@@ -19,9 +19,9 @@ class ActivityLogSeeder extends Seeder
     public function run(): void
     {
         $users = User::all();
-        $tasks = Task::with(['project', 'assignedUsers'])->get();
-        $projects = Project::all();
-        $teams = Team::with('members')->get();
+        $tasks = Task::withoutGlobalScopes()->with(['project', 'assignedUsers'])->get();
+        $projects = Project::withoutGlobalScopes()->get();
+        $teams = Team::withoutGlobalScopes()->with('members')->get();
         $taskStatuses = TaskStatus::all();
 
         if ($users->isEmpty()) {
