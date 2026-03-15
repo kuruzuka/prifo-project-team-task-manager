@@ -18,6 +18,10 @@ class RoleSeeder extends Seeder
                 'description' => 'Full system access with all administrative privileges',
             ],
             [
+                'name' => 'Developer',
+                'description' => 'Internal developer with administrative and documentation access',
+            ],
+            [
                 'name' => 'Manager',
                 'description' => 'Project and team management capabilities',
             ],

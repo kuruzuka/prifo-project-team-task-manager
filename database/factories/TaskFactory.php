@@ -22,12 +22,12 @@ class TaskFactory extends Factory
     public function definition(): array
     {
         return [
-            'project_id' => Project::inRandomOrder()->first()?->id ?? Project::factory(),
+            'project_id' => Project::factory(),
             'title' => fake()->sentence(4),
             'description' => fake()->paragraph(2),
             'priority' => fake()->randomElement(['low', 'medium', 'high', 'critical']),
             'progress' => fake()->numberBetween(0, 100),
-            'status_id' => TaskStatus::inRandomOrder()->first()?->id ?? TaskStatus::factory(),
+            'status_id' => TaskStatus::factory(),
             'due_date' => fake()->dateTimeBetween('now', '+3 months'),
         ];
     }

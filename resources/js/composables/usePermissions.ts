@@ -38,6 +38,11 @@ export function usePermissions() {
     const isAuthenticated = computed(() => permissions.value !== null);
 
     /**
+     * Whether the user has the Developer role.
+     */
+    const isDeveloper = computed(() => permissions.value?.isDeveloper ?? false);
+
+    /**
      * Whether the user has the Admin role.
      */
     const isAdmin = computed(() => permissions.value?.isAdmin ?? false);
@@ -146,12 +151,14 @@ export function usePermissions() {
         viewMyProjects: permissions.value?.nav?.viewMyProjects ?? true,
         viewMyTasks: permissions.value?.nav?.viewMyTasks ?? true,
         viewMyTeams: permissions.value?.nav?.viewMyTeams ?? true,
+        viewDeveloperDocs: permissions.value?.nav?.viewDeveloperDocs ?? false,
     }));
 
     return {
         // Computed permissions
         permissions,
         isAuthenticated,
+        isDeveloper,
         isAdmin,
         isManager,
         isMember,

@@ -77,6 +77,10 @@ class TeamController extends Controller
     {
         $viewer = $request->user();
 
+        if (! $viewer) {
+            abort(401);
+        }
+
         // Authorization: Check if viewer can see this user's teams
         $canViewUserTeams = $viewer->isAdmin()
             || $viewer->id === $user->id
@@ -310,6 +314,6 @@ class TeamController extends Controller
         }
 
         // Default to current user's teams
-        return route('users.teams', ['user' => $user->id]);
+        return $user ? route('users.teams', ['user' => $user->id]) : route('teams');
     }
 }

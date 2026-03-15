@@ -15,11 +15,13 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         $adminRole = Role::where('name', 'Admin')->first();
+        $developerRole = Role::where('name', 'Developer')->first();
         $managerRole = Role::where('name', 'Manager')->first();
         $memberRole = Role::where('name', 'Member')->first();
 
         // Get job titles for assigning
         $engineeringManager = JobTitle::where('name', 'Engineering Manager')->first();
+        $softwareEngineer = JobTitle::where('name', 'Software Engineer')->first();
         $projectManager = JobTitle::where('name', 'Project Manager')->first();
         $jobTitles = JobTitle::all();
 
@@ -32,6 +34,18 @@ class UserSeeder extends Seeder
         ]);
         if ($adminRole) {
             $admin->roles()->syncWithoutDetaching([$adminRole->id]);
+        }
+
+        // Create developer user with Software Engineer title
+        $developer = User::factory()->create([
+            'first_name' => 'Developer',
+            'last_name' => 'User',
+            'email' => 'developer@test.com',
+            'password' => 'password', // Password hashing is handled by user factory/model casts if set up, or manually
+            'job_title_id' => $softwareEngineer?->id ?? $jobTitles->random()?->id,
+        ]);
+        if ($developerRole) {
+            $developer->roles()->syncWithoutDetaching([$developerRole->id]);
         }
 
         // Create 3 managers with Project Manager titles

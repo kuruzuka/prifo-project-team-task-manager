@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\TaskStatus;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\TaskStatus>
@@ -20,13 +21,7 @@ class TaskStatusFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->unique()->randomElement([
-                'To Do',
-                'In Progress',
-                'In Review',
-                'Done',
-                'Blocked',
-            ]),
+            'name' => $this->faker->unique()->word() . ' ' . Str::random(5),
         ];
     }
 }

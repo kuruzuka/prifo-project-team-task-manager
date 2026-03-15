@@ -2,7 +2,6 @@
 
 namespace Database\Factories;
 
-use App\Models\JobTitle;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -27,29 +26,16 @@ class UserFactory extends Factory
         return [
             'first_name' => fake()->firstName(),
             'last_name' => fake()->lastName(),
-            'middle_name' => fake()->optional(0.3)->firstName(),
+            'middle_name' => fake()->optional()->firstName(),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
-            'job_title_id' => JobTitle::inRandomOrder()->first()?->id,
             'remember_token' => Str::random(10),
+            'job_title_id' => \App\Models\JobTitle::inRandomOrder()->first()?->id,
             'two_factor_secret' => null,
             'two_factor_recovery_codes' => null,
             'two_factor_confirmed_at' => null,
         ];
-    }
-
-    /**
-     * Create an admin user.
-     */
-    public function admin(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'first_name' => 'Admin',
-            'last_name' => 'User',
-            'middle_name' => null,
-            'email' => 'admin@test.com',
-        ]);
     }
 
     /**
@@ -63,21 +49,9 @@ class UserFactory extends Factory
     }
 
     /**
-     * Indicate that the model has two-factor authentication configured.
-     */
-    public function withTwoFactor(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'two_factor_secret' => encrypt('secret'),
-            'two_factor_recovery_codes' => encrypt(json_encode(['recovery-code-1'])),
-            'two_factor_confirmed_at' => now(),
-        ]);
-    }
-
-    /**
      * Set a specific job title for the user.
      */
-    public function withJobTitle(JobTitle $jobTitle): static
+    public function withJobTitle(\App\Models\JobTitle $jobTitle): static
     {
         return $this->state(fn (array $attributes) => [
             'job_title_id' => $jobTitle->id,
