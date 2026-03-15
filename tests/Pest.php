@@ -41,6 +41,38 @@ expect()->extend('toBeOne', function () {
 |
 */
 
+function createAdmin()
+{
+    $user = \App\Models\User::factory()->create();
+    $role = \App\Models\Role::firstOrCreate(['name' => 'Admin']);
+    $user->roles()->syncWithoutDetaching([$role->id]);
+    return $user;
+}
+
+function createDeveloper()
+{
+    $user = \App\Models\User::factory()->create();
+    $role = \App\Models\Role::firstOrCreate(['name' => 'Developer']);
+    $user->roles()->syncWithoutDetaching([$role->id]);
+    return $user;
+}
+
+function createManager()
+{
+    $user = \App\Models\User::factory()->create();
+    $role = \App\Models\Role::firstOrCreate(['name' => 'Manager']);
+    $user->roles()->syncWithoutDetaching([$role->id]);
+    return $user;
+}
+
+function createMember()
+{
+    $user = \App\Models\User::factory()->create();
+    $role = \App\Models\Role::firstOrCreate(['name' => 'Member']);
+    $user->roles()->syncWithoutDetaching([$role->id]);
+    return $user;
+}
+
 function something()
 {
     // ..

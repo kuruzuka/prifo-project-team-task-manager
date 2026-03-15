@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\ProjectStatus;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\ProjectStatus>
@@ -20,13 +21,7 @@ class ProjectStatusFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->unique()->randomElement([
-                'Planning',
-                'In Progress',
-                'On Hold',
-                'Completed',
-                'Cancelled',
-            ]),
+            'name' => $this->faker->unique()->word() . ' ' . Str::random(5),
         ];
     }
 }

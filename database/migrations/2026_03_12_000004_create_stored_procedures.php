@@ -41,6 +41,8 @@ return new class extends Migration
         if (!$this->isMySql()) {
             return;
         }
+
+        DB::unprepared('DROP PROCEDURE IF EXISTS sp_assign_task_with_audit');
         // Assign a user to a task with automatic audit logging
         DB::unprepared("
             CREATE PROCEDURE sp_assign_task_with_audit(
@@ -106,6 +108,7 @@ return new class extends Migration
             END
         ");
 
+        DB::unprepared('DROP PROCEDURE IF EXISTS sp_bulk_update_task_status');
         // Bulk update task statuses in a single transaction
         DB::unprepared("
             CREATE PROCEDURE sp_bulk_update_task_status(
@@ -195,6 +198,7 @@ return new class extends Migration
             END
         ");
 
+        DB::unprepared('DROP PROCEDURE IF EXISTS sp_transfer_project_ownership');
         // Transfer project ownership with audit trail
         DB::unprepared("
             CREATE PROCEDURE sp_transfer_project_ownership(
@@ -273,6 +277,7 @@ return new class extends Migration
             END
         ");
 
+        DB::unprepared('DROP PROCEDURE IF EXISTS sp_archive_completed_tasks');
         // Archive old completed tasks in batch
         DB::unprepared("
             CREATE PROCEDURE sp_archive_completed_tasks(

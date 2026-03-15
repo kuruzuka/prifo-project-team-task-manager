@@ -26,9 +26,9 @@ class ProjectFactory extends Factory
 
         return [
             'name' => fake()->sentence(3),
-            'description' => fake()->paragraph(),
-            'status_id' => ProjectStatus::inRandomOrder()->first()?->id ?? ProjectStatus::factory(),
-            'manager_id' => User::inRandomOrder()->first()?->id,
+            'description' => fake()->text(200),
+            'status_id' => ProjectStatus::factory(),
+            'manager_id' => User::factory(),
             'start_date' => $startDate,
             'end_date' => $endDate,
         ];

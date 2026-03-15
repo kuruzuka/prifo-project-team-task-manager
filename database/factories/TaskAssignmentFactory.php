@@ -22,9 +22,9 @@ class TaskAssignmentFactory extends Factory
     public function definition(): array
     {
         return [
-            'task_id' => Task::inRandomOrder()->first()?->id ?? Task::factory(),
-            'user_id' => User::inRandomOrder()->first()?->id ?? User::factory(),
-            'assigned_by' => User::inRandomOrder()->first()?->id ?? User::factory(),
+            'task_id' => Task::factory(),
+            'user_id' => User::factory(),
+            'assigned_by' => User::factory(),
             'assigned_date' => fake()->dateTimeBetween('-1 month', 'now'),
         ];
     }

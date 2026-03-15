@@ -34,12 +34,14 @@ export type NavPermissions = {
     viewMyProjects: boolean;
     viewMyTasks: boolean;
     viewMyTeams: boolean;
+    viewDeveloperDocs: boolean;
 };
 
 /**
  * User permissions shared from backend via Inertia.
  */
 export type Permissions = {
+    isDeveloper: boolean;
     isAdmin: boolean;
     isManager: boolean;
     isMember: boolean;

@@ -37,6 +37,7 @@ import { getInitials } from '@/composables/useInitials';
 import { toUrl } from '@/lib/utils';
 import { dashboard } from '@/routes';
 import type { BreadcrumbItem, NavItem } from '@/types';
+import { usePermissions } from '@/composables/usePermissions';
 
 type Props = {
     breadcrumbs?: BreadcrumbItem[];
@@ -49,6 +50,7 @@ const props = withDefaults(defineProps<Props>(), {
 const page = usePage();
 const auth = computed(() => page.props.auth);
 const { isCurrentUrl, whenCurrentUrl } = useCurrentUrl();
+const { nav } = usePermissions();
 
 const activeItemStyles =
     'text-neutral-900 dark:bg-neutral-800 dark:text-neutral-100';
@@ -61,18 +63,25 @@ const mainNavItems: NavItem[] = [
     },
 ];
 
-const rightNavItems: NavItem[] = [
-    {
-        title: 'Repository',
-        href: 'https://github.com/laravel/vue-starter-kit',
-        icon: Folder,
-    },
-    {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#vue',
-        icon: BookOpen,
-    },
-];
+const rightNavItems = computed<NavItem[]>(() => {
+    const items: NavItem[] = [
+        {
+            title: 'Repository',
+            href: 'https://github.com/laravel/vue-starter-kit',
+            icon: Folder,
+        },
+    ];
+
+    if (nav.value.viewDeveloperDocs) {
+        items.push({
+            title: 'Developer Docs',
+            href: '/docs',
+            icon: BookOpen,
+        });
+    }
+
+    return items;
+});
 </script>
 
 <template>

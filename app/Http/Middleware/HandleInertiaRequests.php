@@ -71,6 +71,7 @@ class HandleInertiaRequests extends Middleware
 
         return [
             // Role-based permissions
+            'isDeveloper' => $user->isDeveloper(),
             'isAdmin' => $user->isAdmin(),
             'isManager' => $user->isManager(),
             'isMember' => $user->isMember(),
@@ -128,6 +129,7 @@ class HandleInertiaRequests extends Middleware
             'viewMyProjects' => true,
             'viewMyTasks' => true,
             'viewMyTeams' => true,
+            'viewDeveloperDocs' => $user->isDeveloper(),
         ];
     }
 }

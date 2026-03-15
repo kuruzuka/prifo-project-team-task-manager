@@ -137,19 +137,26 @@ const adminNavItems = computed<NavItem[]>(() => {
     return items;
 });
 
-const footerNavItems: NavItem[] = [
-    {
-        title: 'Developer Docs',
-        href: '/docs',
-        icon: BookOpen,
-        target: '_blank',
-    },
-    {
+const footerNavItems = computed<NavItem[]>(() => {
+    const items: NavItem[] = [];
+
+    if (nav.value.viewDeveloperDocs) {
+        items.push({
+            title: 'Developer Docs',
+            href: '/docs',
+            icon: BookOpen,
+            target: '_blank',
+        });
+    }
+
+    items.push({
         title: 'Repository',
         href: 'https://github.com/laravel/vue-starter-kit',
         icon: FolderGit2,
-    },
-];
+    });
+
+    return items;
+});
 </script>
 
 <template>

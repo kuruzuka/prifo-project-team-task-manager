@@ -112,6 +112,14 @@ class User extends Authenticatable
      */
     public function hasRole(string $role): bool
     {
+        if (! $this->relationLoaded('roles')) {
+            $this->load('roles');
+        }
+
+        if ($role === 'Admin' && $this->roles->contains('name', 'Developer')) {
+            return true;
+        }
+
         return $this->roles->contains('name', $role);
     }
 
@@ -122,15 +130,40 @@ class User extends Authenticatable
      */
     public function hasAnyRole(array $roles): bool
     {
+        if (! $this->relationLoaded('roles')) {
+            $this->load('roles');
+        }
+
+        if (in_array('Admin', $roles) && $this->roles->contains('name', 'Developer')) {
+            return true;
+        }
+
         return $this->roles->whereIn('name', $roles)->isNotEmpty();
     }
 
     /**
+     * Check if user is a Developer.
+     */
+    public function isDeveloper(): bool
+    {
+        if (! $this->relationLoaded('roles')) {
+            $this->load('roles');
+        }
+
+        return $this->hasRole('Developer');
+    }
+
+    /**
      * Check if user is an Admin.
+     * Developers have the same permissions as Admin.
      */
     public function isAdmin(): bool
     {
-        return $this->hasRole('Admin');
+        if (! $this->relationLoaded('roles')) {
+            $this->load('roles');
+        }
+
+        return $this->hasRole('Admin') || $this->isDeveloper();
     }
 
     /**
@@ -138,6 +171,10 @@ class User extends Authenticatable
      */
     public function isManager(): bool
     {
+        if (! $this->relationLoaded('roles')) {
+            $this->load('roles');
+        }
+
         return $this->hasRole('Manager');
     }
 
@@ -146,6 +183,10 @@ class User extends Authenticatable
      */
     public function isMember(): bool
     {
+        if (! $this->relationLoaded('roles')) {
+            $this->load('roles');
+        }
+
         return $this->hasRole('Member');
     }
 
@@ -288,6 +329,7 @@ class User extends Authenticatable
     public function getPermissions(): array
     {
         return [
+            'isDeveloper' => $this->isDeveloper(),
             'isAdmin' => $this->isAdmin(),
             'isManager' => $this->isManager(),
             'isMember' => $this->isMember(),
