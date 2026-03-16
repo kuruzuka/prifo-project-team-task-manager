@@ -559,6 +559,7 @@ Additional technical documentation is available in the `docs/` folder:
 - [Authorization System](docs/AUTHORIZATION.md)
 - [Database Reliability](docs/DATABASE_RELIABILITY.md)
 - [Database Behavior & Concurrency](docs/DATABASE_BEHAVIOR_TECHNICAL_DOCUMENTATION.md)
+- [Full Security Checks and Features Documentation](docs/SECURITY_CHECKS_AND_TEST.md)
 
 ---
 
