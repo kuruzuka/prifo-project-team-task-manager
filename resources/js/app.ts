@@ -6,8 +6,12 @@ import '../css/app.css';
 import 'vue-sonner/style.css';
 import { initializeTheme } from '@/composables/useAppearance';
 import { Toaster } from '@/components/ui/sonner';
+import { setupRateLimitInterceptor } from '@/composables/useRateLimit';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+
+// Setup rate limit interceptor
+setupRateLimitInterceptor();
 
 createInertiaApp({
     title: (title) => (title ? `${appName} - ${title}` : appName),

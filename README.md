@@ -18,6 +18,20 @@ Priflo implements a role-based permission system where Admins have full control,
 
 ---
 
+## 🛡️ Security Features
+
+This project places a high priority on data protection, robust authorization, and user experience during rate-limited events. The application incorporates industry-standard security practices specifically tailored for the Laravel and Inertia.js (Vue) ecosystem:
+
+- **Robust Authorization:** Comprehensive implementation of Laravel Policies and Gates to prevent Insecure Direct Object References (IDOR). Access to Projects, Tasks, and Teams is strictly isolated based on exact user roles and team memberships.
+- **Intelligent Rate Limiting:** Critical endpoints (login, registration, password resets, and content creation) are protected against spam and brute-force attacks. 
+- **Global Rate-Limit UX:** An advanced frontend integration intercepts rate-limit triggers globally, providing users with persistent, context-aware countdown alerts that survive page refreshes and multi-tab sessions.
+- **Strict Input Validation:** All state-modifying requests route through FormRequests, guaranteeing that unguarded mass-assignment vulnerabilities are mitigated.
+- **Secure Headers & Sessions:** The application enforces a strict Content Security Policy (CSP) tailored for Vue, alongside HSTS, X-Frame-Options, and X-Content-Type-Options. Cookies are protected with HTTP-only and strict SameSite configurations.
+- **Frontend XSS Protection:** Rendering of HTML via Vue (`v-html`) is strictly limited to server-generated, sanitized strings (e.g., SVG QR codes and pagination UI).
+- **Data Exposure Prevention:** Production configurations guarantee that stack traces, environment variables, and debug data are never leaked to the client.
+
+---
+
 ## Key Features
 
 ### Project Management

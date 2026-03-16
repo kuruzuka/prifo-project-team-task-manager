@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Form, Head } from '@inertiajs/vue3';
+import RateLimitAlert from '@/components/RateLimitAlert.vue';
 import InputError from '@/components/InputError.vue';
 import TextLink from '@/components/TextLink.vue';
 import { Button } from '@/components/ui/button';
@@ -25,6 +26,8 @@ defineProps<{
         description="Enter your email and password below to log in"
     >
         <Head title="Log in" />
+
+        <RateLimitAlert context="login" />
 
         <div
             v-if="status"

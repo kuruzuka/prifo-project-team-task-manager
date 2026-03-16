@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Form, Head } from '@inertiajs/vue3';
+import RateLimitAlert from '@/components/RateLimitAlert.vue';
 import InputError from '@/components/InputError.vue';
 import TextLink from '@/components/TextLink.vue';
 import { Button } from '@/components/ui/button';
@@ -21,6 +22,8 @@ defineProps<{
         description="Enter your email to receive a password reset link"
     >
         <Head title="Forgot password" />
+
+        <RateLimitAlert context="password-reset" />
 
         <div
             v-if="status"

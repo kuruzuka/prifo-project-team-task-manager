@@ -24,16 +24,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     // Projects: individual access controlled by ProjectPolicy
-    Route::post('projects', [ProjectController::class, 'store'])->name('projects.store');
+    Route::post('projects', [ProjectController::class, 'store'])->middleware('throttle:creation')->name('projects.store');
     Route::get('projects/{project}', [ProjectController::class, 'show'])->name('projects.show');
-    Route::patch('projects/{project}', [ProjectController::class, 'update'])->name('projects.update');
+    Route::patch('projects/{project}', [ProjectController::class, 'update'])->middleware('throttle:creation')->name('projects.update');
     Route::patch('projects/{project}/teams', [ProjectController::class, 'updateTeams'])->name('projects.updateTeams');
 
     // Tasks: individual access controlled by TaskPolicy
-    Route::post('tasks', [TaskController::class, 'store'])->name('tasks.store');
+    Route::post('tasks', [TaskController::class, 'store'])->middleware('throttle:creation')->name('tasks.store');
     Route::get('tasks/{task}', [TaskController::class, 'show'])->name('tasks.show');
     Route::get('tasks/{task}/edit', [TaskController::class, 'edit'])->name('tasks.edit');
-    Route::put('tasks/{task}', [TaskController::class, 'update'])->name('tasks.update');
+    Route::put('tasks/{task}', [TaskController::class, 'update'])->middleware('throttle:creation')->name('tasks.update');
     Route::delete('tasks/{task}', [TaskController::class, 'destroy'])->name('tasks.destroy');
 
     // Task activity updates (status, priority, progress, assignees)
@@ -44,12 +44,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('tasks/{task}/assignees/{user}', [TaskController::class, 'removeAssignee'])->name('tasks.removeAssignee');
 
     // Task comments
-    Route::post('tasks/{task}/comments', [CommentController::class, 'store'])->name('tasks.comments.store');
-    Route::patch('comments/{comment}', [CommentController::class, 'update'])->name('comments.update');
+    Route::post('tasks/{task}/comments', [CommentController::class, 'store'])->middleware('throttle:creation')->name('tasks.comments.store');
+    Route::patch('comments/{comment}', [CommentController::class, 'update'])->middleware('throttle:creation')->name('comments.update');
 
     // Teams: individual access controlled by TeamPolicy
     Route::get('teams/{team}', [TeamController::class, 'show'])->name('teams.show');
-    Route::post('teams/{team}/members', [TeamController::class, 'addMember'])->name('teams.addMember');
+    Route::post('teams/{team}/members', [TeamController::class, 'addMember'])->middleware('throttle:creation')->name('teams.addMember');
     Route::delete('teams/{team}/members/{user}', [TeamController::class, 'removeMember'])->name('teams.removeMember');
 
     // User-scoped routes: users can view their own resources
